@@ -168,6 +168,14 @@ begin
   C32W := 64 + 8;
   REM := 11;
 
+  if not exists (
+    select *
+    from table_column(table_schema, table_name) 
+    limit 1
+  ) then 
+    raise exception '%', ('Table "' || table_schema || '.' || table_name || '" was not found!');
+  end if;
+
   raise info 
     '%', 
     rpad(
