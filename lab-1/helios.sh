@@ -9,7 +9,7 @@ print() {
 
 run() {
   print "Running SQL script: $1..."
-  psql -h pg -d ucheb -f $1
+  psql -h pg -d studs -f $1
 }
 
 print "Starting defending the 1st lab solution..."
