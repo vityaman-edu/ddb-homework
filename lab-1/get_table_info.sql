@@ -76,7 +76,7 @@ create or replace function table_column(
     check_constraints.constraint_name = constraint_column_usage.constraint_name
   )
   left join pg_attribute on (
-    (pg_attribute.attrelid = (
+    pg_attribute.attrelid = (
       SELECT oid 
       FROM pg_class
       WHERE (
@@ -87,7 +87,7 @@ create or replace function table_column(
           where pg_namespace.nspname = table_column.table_schema
         )
       )
-    ) as qqq) and
+    ) and
     pg_attribute.attname = information_schema.columns.column_name
   )
   left join pg_description on (
