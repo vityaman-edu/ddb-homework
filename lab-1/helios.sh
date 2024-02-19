@@ -14,7 +14,7 @@ run() {
 
 print "Starting defending the 1st lab solution..."
 
-run run initialize.sql
+run initialize.sql
 run get_table_info.sql
 
 print "Done!"
