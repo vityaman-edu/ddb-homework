@@ -1,0 +1,156 @@
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[russian]{babel}
+\usepackage[a4paper, margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{wrapfig}
+\usepackage{multirow}
+\usepackage{mathtools}
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+\usepackage{setspace}
+\usepackage{changepage}
+\usepackage{caption}
+\usepackage{csquotes}
+\usepackage{hyperref}
+\usepackage{listings}
+
+\pgfplotsset{compat=1.18}
+\hypersetup{
+  colorlinks = true,
+  linkcolor  = blue,
+  filecolor  = magenta,      
+  urlcolor   = darkgray,
+  pdftitle   = ddb-report-1-smirnov-victor-p33131,
+}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.99,0.99,0.99}
+
+\lstdefinestyle{codestyle}{
+  backgroundcolor=\color{backcolour},   
+  commentstyle=\color{codegreen},
+  keywordstyle=\color{magenta},
+  numberstyle=\tiny\color{codegray},
+  stringstyle=\color{codepurple},
+  basicstyle=\ttfamily\footnotesize,
+  breakatwhitespace=false,         
+  breaklines=true,                 
+  captionpos=b,                    
+  keepspaces=true,                 
+  numbers=left,                    
+  numbersep=5pt,                  
+  showspaces=false,                
+  showstringspaces=false,
+  showtabs=false,                  
+  tabsize=2
+}
+
+\lstset{style=codestyle}
+
+\begin{document}
+
+\begin{titlepage}
+    \begin{center}
+        \begin{spacing}{1.4}
+            \large{Университет ИТМО} \\
+            \large{Факультет программной инженерии и компьютерной техники} \\
+        \end{spacing}
+        \vfill
+        \textbf{
+            \huge{Распределённые системы хранения данных.} \\
+            \huge{Лабораторная работа №1.} \\
+        }
+    \end{center}
+    \vfill
+    \begin{center}
+        \begin{tabular}{r l}
+            Группа:        & P33131                      \\
+            Студент:       & Смирнов Виктор Игоревич     \\
+            Преподаватель: & Афанасьев Дмитрий Борисович \\
+            Вариант:       & 776                         \\
+        \end{tabular}
+    \end{center}
+    \vfill
+    \begin{center}
+        \begin{large}
+            2024
+        \end{large}
+    \end{center}
+\end{titlepage}
+
+\section*{Ключевые слова}
+
+База данных, PostgreSQL, системный каталог.
+
+\tableofcontents
+
+\section{Цель работы}
+
+Научиться проектировать базы данных, составлять инфологические и даталогические модели данных, реализовывать их в БД PostgreSQL, научиться выполнять запросы.
+
+\section{Текст задания}
+
+Используя сведения из системных каталогов получить информацию о любой таблице: Номер по порядку, Имя столбца, Атрибуты (в атрибуты столбца включить тип данных, ограничение типа CHECK).
+
+Пример вывода:
+\begin{verbatim}
+Таблица: Н_ЛЮДИ
+No.  Имя столбца         Атрибуты
+--- ------------ ------------------------------------------------------
+1   ИД            Type    : NUMBER(9) NOT NULL
+                  Comment : 'Уникальный номер человека'
+2   ФАМИЛИЯ       Type    : VARCHAR2(25) NOT NULL
+                  Comment : 'Фамилия человека'
+3   ИМЯ           Type    : VARCHAR2(2000) NOT NULL
+                  Comment : 'Имя человека'
+4   ОТЧЕСТВО      Type    : VARCHAR2(20)  
+                  Comment : 'Отчество человека'
+5   ДАТА_РОЖДЕНИЯ Type    : DATE NOT NULL
+                  Comment : 'Дата рождения человека'
+6   ПОЛ           Type    : CHAR(1) NOT NULL
+                  Constr  : "AVCON_378561_ПОЛ_000" CHECK (ПОЛ IN ('М', 'Ж'))
+                  Constr  : "AVCON_388176_ПОЛ_000" CHECK (ПОЛ IN ('М', 'Ж'))
+                  Comment : 'Пол человека'
+7   ИНОСТРАН      Type    : VARCHAR2(3) NOT NULL
+8   КТО_СОЗДАЛ    Type    : VARCHAR2(40) NOT NULL
+9   КОГДА_СОЗДАЛ  Type    : DATE NOT NULL
+10  КТО_ИЗМЕНИЛ   Type    : VARCHAR2(40) NOT NULL
+11  КОГДА_ИЗМЕНИ  Type    : DATE NOT NULL
+12  ДАТА_СМЕРТИ   Type    : DATE  
+                  Comment : 'Дата смерти человека'
+13  ПИН           Type    : VARCHAR2(20)  
+14  ИНН           Type    : VARCHAR2(20)  
+\end{verbatim}
+
+\section{Создание локального окружения для тестирования}
+
+Для локального взаимодействия я решил поднять PostgreSQL в Docker контейнере.
+
+\lstinputlisting[language=Python]{../docker-compose.yml}
+
+Далее был написан SQL скрипт, создающий таблицу, аналогичную той, что в примере.
+
+\lstinputlisting[language=SQL]{initialize.sql}
+
+\section{Реализация скрипта}
+
+\lstinputlisting[language=SQL]{get_table_info.sql}
+
+\section{Вывод}
+
+\lstinputlisting[language=bash]{out.txt}
+
+\section{Вывод}
+
+Данная лабораторная работа помогла мне изучить системный каталог PostgreSQL.
+
+\begin{thebibliography}{9}
+
+\end{thebibliography}
+
+\end{document}
