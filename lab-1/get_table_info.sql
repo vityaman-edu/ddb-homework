@@ -242,7 +242,7 @@ begin
   where information_schema.tables.table_name = solution.table_name
   limit 1;
 
-  perform print_table_info(table_schema, 'person');
+  perform print_table_info(table_schema, table_name);
 end;
 $$ language plpgsql;
 
