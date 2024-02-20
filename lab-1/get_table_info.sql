@@ -77,7 +77,7 @@ create or replace function table_column(
   )
   left join pg_attribute on (
     pg_attribute.attrelid = (
-      SELECT oid 
+      SELECT oid
       FROM pg_class
       WHERE (
         pg_class.relname = table_column.table_name and
@@ -231,4 +231,19 @@ begin
 end;
 $$ language plpgsql;
 
-select print_table_info('public', 'person');
+create or replace function solution(
+  table_name text
+) returns void as $$
+declare
+  table_schema text;
+begin
+  select information_schema.tables.table_schema into table_schema
+  from information_schema.tables
+  where information_schema.tables.table_name = solution.table_name
+  limit 1;
+
+  perform print_table_info(table_schema, 'person');
+end;
+$$ language plpgsql;
+
+select solution('person');
