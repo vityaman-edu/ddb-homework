@@ -231,9 +231,9 @@ begin
 end;
 $$ language plpgsql;
 
-create or replace function solution(
+create or replace procedure solution(
   table_name text
-) returns void as $$
+) as $$
 declare
   table_schema text;
 begin
