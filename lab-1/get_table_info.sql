@@ -246,4 +246,4 @@ begin
 end;
 $$ language plpgsql;
 
-select solution('person');
+call solution('person');
