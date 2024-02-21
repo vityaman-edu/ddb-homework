@@ -148,10 +148,10 @@ create or replace function table_column_pretty(
   order by number;
 $$ language sql;
 
-create or replace function print_table_info(
+create or replace procedure print_table_info(
   table_schema text,
   table_name text
-) returns void as $$
+) as $$
 declare
   col record;
   col_contr record;
