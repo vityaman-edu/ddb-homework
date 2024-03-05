@@ -18,6 +18,9 @@ run() {
 }
 
 run initialize.sql
+run table_column.sql
+run table_column_pretty.sql
+run print_table_info.sql
 run get_table_info.sql
 
 print "Done."
