@@ -128,6 +128,35 @@ CREATE VIEW meta_display_constraint_primary_key_multiple AS
   FROM meta_constraint_primary_key
   WHERE cardinality(meta_constraint_primary_key.constrained_column_numbers) != 1;
 
+DROP VIEW IF EXISTS meta_display_constraint_unique_single CASCADE;
+CREATE VIEW meta_display_constraint_unique_single AS
+  SELECT
+    meta_constraint_unique.id                            AS id,
+    meta_constraint_unique.name                          AS name,
+    meta_constraint_unique.namespace_id                  AS namespace_id,
+    meta_constraint_unique.constrained_table_id          AS constrained_table_id,
+    meta_constraint_unique.constrained_column_numbers[1] AS constrained_column_number,
+    'UNIQUE'                                             AS clause
+  FROM meta_constraint_unique
+  WHERE cardinality(meta_constraint_unique.constrained_column_numbers) = 1;
+
+DROP VIEW IF EXISTS meta_display_constraint_unique_multiple CASCADE;
+CREATE VIEW meta_display_constraint_unique_multiple AS
+  SELECT
+    meta_constraint_unique.id                          AS id,
+    meta_constraint_unique.name                        AS name,
+    meta_constraint_unique.namespace_id                AS namespace_id,
+    meta_constraint_unique.constrained_table_id        AS constrained_table_id,
+    meta_constraint_unique.constrained_column_numbers  AS constrained_column_numbers,
+    (
+      'UNIQUE ' || (
+        SELECT string_agg(meta_display_column_name(constrained_table_id, constrained_column_number), ', ') 
+        FROM unnest(meta_constraint_unique.constrained_column_numbers) 
+        AS constrained_column_number
+      )
+    )                                                  AS clause
+  FROM meta_constraint_unique
+  WHERE cardinality(meta_constraint_unique.constrained_column_numbers) != 1;
 
 DROP VIEW IF EXISTS meta_display_contraint_single CASCADE;
 CREATE VIEW meta_display_contraint_single AS
@@ -140,6 +169,9 @@ CREATE VIEW meta_display_contraint_single AS
   ) UNION ALL (
     SELECT id, name, namespace_id, constrained_table_id, constrained_column_number, clause
     FROM meta_display_constraint_primary_key_single
+  ) UNION ALL (
+    SELECT id, name, namespace_id, constrained_table_id, constrained_column_number, clause
+    FROM meta_display_constraint_unique_single
   );
 
 DROP VIEW IF EXISTS meta_display_contraint_multiple CASCADE;
@@ -153,4 +185,7 @@ CREATE VIEW meta_display_contraint_multiple AS
   ) UNION ALL (
     SELECT id, name, namespace_id, constrained_table_id, clause 
     FROM meta_display_constraint_primary_key_multiple
+  ) UNION ALL (
+    SELECT id, name, namespace_id, constrained_table_id, clause 
+    FROM meta_display_constraint_unique_multiple
   );

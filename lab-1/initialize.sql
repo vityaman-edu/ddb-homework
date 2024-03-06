@@ -21,7 +21,10 @@ create table person (
     length(patronymic) > 10 AND 
     length(last_name) > 10 AND 
     length(first_name) > 10
-  )
+  ),
+  unique (last_name, first_name, patronymic),
+  unique (inn),
+  unique (pin)
 );
 
 drop table if exists item;
