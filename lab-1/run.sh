@@ -18,9 +18,13 @@ run() {
 }
 
 run initialize.sql
-run table_column.sql
-run table_column_pretty.sql
-run print_table_info.sql
-run get_table_info.sql
+run meta.sql
+run meta_display.sql
+run main.sql
+
+# run table_column.sql
+# run table_column_pretty.sql
+# run print_table_info.sql
+# run get_table_info.sql
 
 print "Done."

@@ -16,7 +16,24 @@ create table person (
   inn varchar(20),
 
   check (gender in ('M', 'F')),
-  check (gender in ('M', 'F'))
+  check (gender in ('M', 'F')),
+  check (
+    length(patronymic) > 10 AND 
+    length(last_name) > 10 AND 
+    length(first_name) > 10
+  )
+);
+
+drop table if exists item;
+create table item (
+  id1 integer,
+  id2 integer,
+
+  id11 integer,
+  id12 integer,
+
+  primary key (id1, id2),
+  foreign key (id11, id12) references item(id1, id2)
 );
 
 comment on column person.id is 'The unique number of the person';
