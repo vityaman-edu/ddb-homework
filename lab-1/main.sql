@@ -72,9 +72,10 @@ BEGIN
   ----- ROWS -----
   FOR col IN 
     SELECT 
-      meta_table_column.number AS column_number,
-      meta_table_column.name   AS column_name,
-      meta_type.name           AS type_name
+      meta_table_column.number      AS column_number,
+      meta_table_column.name        AS column_name,
+      meta_type.name                AS type_name,
+      meta_table_column.is_nullable AS is_nullable
     FROM meta_table
     JOIN meta_namespace ON meta_namespace.id = meta_table.namespace_id
     JOIN meta_table_column ON meta_table.id = meta_table_column.table_id
@@ -88,6 +89,13 @@ BEGIN
       rpad(col.column_number::text, C1W, ' '),
       rpad(col.column_name, C2W, ' '),
       (rpad('Type', C31W, ' ') || ': ' || rpad(col.type_name, C32W, ' '));
+    RAISE INFO
+      '| % | % | % |',
+      rpad(col.column_number::text, C1W, ' '),
+      rpad(col.column_name, C2W, ' '),
+      (rpad('Null', C31W, ' ') || ': ' || rpad((
+        CASE WHEN col.is_nullable THEN 'NULLABLE' ELSE 'NOT NULL' END 
+      ), C32W, ' '));
     FOR col_constr IN 
       SELECT
         contraint_name   AS name,
