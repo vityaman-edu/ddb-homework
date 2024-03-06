@@ -88,11 +88,3 @@ CREATE VIEW meta_constraint_unique AS
 
 -- TODO: t = constraint trigger
 -- TODO: x = exclusion constraint
-
--- SELECT * FROM meta_namespace;
--- SELECT * FROM meta_table;
--- SELECT * FROM meta_table_column;
--- SELECT * FROM meta_constraint_check;
--- SELECT * FROM meta_constraint_foreign_key;
--- SELECT * FROM meta_constraint_primary_key;
--- SELECT * FROM meta_constraint_unique;
