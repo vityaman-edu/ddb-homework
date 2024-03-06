@@ -127,21 +127,17 @@ No.  Имя столбца         Атрибуты
 14  ИНН           Type    : VARCHAR2(20)  
 \end{verbatim}
 
-\section{Создание локального окружения для тестирования}
-
-Для локального взаимодействия я решил поднять PostgreSQL в Docker контейнере.
-
-\lstinputlisting[language=Python]{../docker-compose.yml}
-
 Далее был написан SQL скрипт, создающий таблицу, аналогичную той, что в примере.
 
 \lstinputlisting[language=SQL]{initialize.sql}
 
 \section{Реализация скрипта}
 
-\lstinputlisting[language=SQL]{get_table_info.sql}
+\lstinputlisting[language=SQL]{meta.sql}
+\lstinputlisting[language=SQL]{meta_display.sql}
+\lstinputlisting[language=SQL]{main.sql}
 
-\section{Вывод}
+\section{Таблица}
 
 \lstinputlisting[language=bash]{out.txt}
 

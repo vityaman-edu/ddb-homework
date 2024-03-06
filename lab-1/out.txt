@@ -1,39 +1,30 @@
-psql:get_table_info.sql:249: INFO:  |--- Table "public.person" Information ------------------------------------------------------------------|
-psql:get_table_info.sql:249: INFO:  | N  | Name         | Attributes                                                                         |
-psql:get_table_info.sql:249: INFO:  |--------------------------------------------------------------------------------------------------------|
-psql:get_table_info.sql:249: INFO:  | 1  | id           | Type    : numeric (9, 2)                                                           |
-psql:get_table_info.sql:249: INFO:  |    |              | Comment : The unique number of the person                                          |
-psql:get_table_info.sql:249: INFO:  |--------------------------------------------------------------------------------------------------------|
-psql:get_table_info.sql:249: INFO:  | 2  | last_name    | Type    : character varying (25)                                                   |
-psql:get_table_info.sql:249: INFO:  |    |              | Comment : Last name of the person                                                  |
-psql:get_table_info.sql:249: INFO:  |--------------------------------------------------------------------------------------------------------|
-psql:get_table_info.sql:249: INFO:  | 3  | first_name   | Type    : character varying (2000)                                                 |
-psql:get_table_info.sql:249: INFO:  |    |              | Comment : The name of the person                                                   |
-psql:get_table_info.sql:249: INFO:  |--------------------------------------------------------------------------------------------------------|
-psql:get_table_info.sql:249: INFO:  | 4  | patronymic   | Type    : character varying (20)                                                   |
-psql:get_table_info.sql:249: INFO:  |    |              | Comment : The patronymic of the person                                             |
-psql:get_table_info.sql:249: INFO:  |--------------------------------------------------------------------------------------------------------|
-psql:get_table_info.sql:249: INFO:  | 5  | birth_date   | Type    : date                                                                     |
-psql:get_table_info.sql:249: INFO:  |    |              | Comment : Date of birth of a person                                                |
-psql:get_table_info.sql:249: INFO:  |--------------------------------------------------------------------------------------------------------|
-psql:get_table_info.sql:249: INFO:  | 6  | gender       | Type    : character (1)                                                            |
-psql:get_table_info.sql:249: INFO:  |    |              | Constr  : person_gender_check ((gender = ANY (ARRAY['M'::bpchar, 'F'::bpchar])))   |
-psql:get_table_info.sql:249: INFO:  |    |              | Constr  : person_gender_check1 ((gender = ANY (ARRAY['M'::bpchar, 'F'::bpchar])))  |
-psql:get_table_info.sql:249: INFO:  |--------------------------------------------------------------------------------------------------------|
-psql:get_table_info.sql:249: INFO:  | 7  | foreigner    | Type    : character varying (3)                                                    |
-psql:get_table_info.sql:249: INFO:  |--------------------------------------------------------------------------------------------------------|
-psql:get_table_info.sql:249: INFO:  | 8  | created_who  | Type    : character varying (40)                                                   |
-psql:get_table_info.sql:249: INFO:  |--------------------------------------------------------------------------------------------------------|
-psql:get_table_info.sql:249: INFO:  | 9  | created_when | Type    : date                                                                     |
-psql:get_table_info.sql:249: INFO:  |--------------------------------------------------------------------------------------------------------|
-psql:get_table_info.sql:249: INFO:  | 10 | edited_who   | Type    : character varying (40)                                                   |
-psql:get_table_info.sql:249: INFO:  |--------------------------------------------------------------------------------------------------------|
-psql:get_table_info.sql:249: INFO:  | 11 | edited_when  | Type    : date                                                                     |
-psql:get_table_info.sql:249: INFO:  |--------------------------------------------------------------------------------------------------------|
-psql:get_table_info.sql:249: INFO:  | 12 | death_date   | Type    : date                                                                     |
-psql:get_table_info.sql:249: INFO:  |    |              | Comment : Date of death of a person                                                |
-psql:get_table_info.sql:249: INFO:  |--------------------------------------------------------------------------------------------------------|
-psql:get_table_info.sql:249: INFO:  | 13 | pin          | Type    : character varying (20)                                                   |
-psql:get_table_info.sql:249: INFO:  |--------------------------------------------------------------------------------------------------------|
-psql:get_table_info.sql:249: INFO:  | 14 | inn          | Type    : character varying (20)                                                   |
-psql:get_table_info.sql:249: INFO:  |--------------------------------------------------------------------------------------------------------|
+psql:main.sql:131: INFO:  |--- Table "public.person" Information ------------------------------------------------------------------|
+psql:main.sql:131: INFO:  | N  | Name         | Attributes                                                                         |
+psql:main.sql:131: INFO:  |--------------------------------------------------------------------------------------------------------|
+psql:main.sql:131: INFO:  |    | tableoid     | Type    : oid                                                                      |
+psql:main.sql:131: INFO:  |    | cmax         | Type    : cid                                                                      |
+psql:main.sql:131: INFO:  |    | xmax         | Type    : xid                                                                      |
+psql:main.sql:131: INFO:  |    | cmin         | Type    : cid                                                                      |
+psql:main.sql:131: INFO:  |    | xmin         | Type    : xid                                                                      |
+psql:main.sql:131: INFO:  |    | ctid         | Type    : tid                                                                      |
+psql:main.sql:131: INFO:  |    | id           | Type    : numeric                                                                  |
+psql:main.sql:131: INFO:  |    |              | Constr  : person_pkey PRIMARY KEY                                                  |
+psql:main.sql:131: INFO:  |    | last_name    | Type    : varchar                                                                  |
+psql:main.sql:131: INFO:  |    | first_name   | Type    : varchar                                                                  |
+psql:main.sql:131: INFO:  |    | patronymic   | Type    : varchar                                                                  |
+psql:main.sql:131: INFO:  |    | birth_date   | Type    : date                                                                     |
+psql:main.sql:131: INFO:  |    | gender       | Type    : bpchar                                                                   |
+psql:main.sql:131: INFO:  |    |              | Constr  : person_gender_check (gender = ANY (ARRAY['M'::bpchar, 'F'::bpchar]))     |
+psql:main.sql:131: INFO:  |    |              | Constr  : person_gender_check1 (gender = ANY (ARRAY['M'::bpchar, 'F'::bpchar]))    |
+psql:main.sql:131: INFO:  |    | foreigner    | Type    : varchar                                                                  |
+psql:main.sql:131: INFO:  |    | created_who  | Type    : varchar                                                                  |
+psql:main.sql:131: INFO:  |    | created_when | Type    : date                                                                     |
+psql:main.sql:131: INFO:  |    | edited_who   | Type    : varchar                                                                  |
+psql:main.sql:131: INFO:  |    | edited_when  | Type    : date                                                                     |
+psql:main.sql:131: INFO:  |    | death_date   | Type    : date                                                                     |
+psql:main.sql:131: INFO:  |    | pin          | Type    : varchar                                                                  |
+psql:main.sql:131: INFO:  |    |              | Constr  : person_pin_key UNIQUE                                                    |
+psql:main.sql:131: INFO:  |    | inn          | Type    : varchar                                                                  |
+psql:main.sql:131: INFO:  |    |              | Constr  : person_inn_key UNIQUE                                                    |
+psql:main.sql:131: INFO:  | Constr  : person_check ((length((patronymic)::text) > 10) AND (length((last_name)::text) > 10) AND (length((first_name)::text) > 10)) |
+psql:main.sql:131: INFO:  | Constr  : person_last_name_first_name_patronymic_key UNIQUE last_name, first_name, patronymic |
