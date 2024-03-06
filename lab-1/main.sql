@@ -130,4 +130,4 @@ BEGIN
 END;
 $$ language plpgsql;
 
-CALL main_table_print_pretty('public', 'person');
+CALL main_table_print_pretty('s335158', 'person');
