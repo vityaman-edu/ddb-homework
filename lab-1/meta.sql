@@ -23,6 +23,14 @@ CREATE VIEW meta_table_column AS
     (NOT pg_attribute.attnotnull) AS is_nullable
   FROM pg_attribute;
 
+DROP VIEW IF EXISTS meta_comment CASCADE;
+CREATE VIEW meta_comment AS 
+  SELECT 
+    pg_description.objoid       AS owner_id,
+    pg_description.objsubid     AS child_id,
+    pg_description.description  AS content
+  FROM pg_description;
+
 DROP VIEW IF EXISTS meta_type CASCADE;
 CREATE VIEW meta_type AS 
   SELECT 
