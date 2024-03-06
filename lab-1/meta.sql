@@ -23,6 +23,13 @@ CREATE VIEW meta_table_column AS
     (NOT pg_attribute.attnotnull) AS is_nullable
   FROM pg_attribute;
 
+DROP VIEW IF EXISTS meta_type CASCADE;
+CREATE VIEW meta_type AS 
+  SELECT 
+    pg_type.oid     AS id,
+    pg_type.typname AS name
+  FROM pg_type;
+
 DROP VIEW IF EXISTS meta_constraint_check CASCADE;
 CREATE VIEW meta_constraint_check AS 
   SELECT 
