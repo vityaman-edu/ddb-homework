@@ -76,7 +76,7 @@ BEGIN
       meta_table_column.name        AS column_name,
       meta_type.name                AS type_name,
       meta_table_column.is_nullable AS is_nullable,
-      meta_table.id                 AS table_id,
+      meta_table.id                 AS table_id
     FROM meta_table
     JOIN meta_namespace ON meta_namespace.id = meta_table.namespace_id
     JOIN meta_table_column ON meta_table.id = meta_table_column.table_id
