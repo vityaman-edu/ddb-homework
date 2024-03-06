@@ -28,7 +28,7 @@ CREATE VIEW main_table_constraint AS
     meta_display_contraint_multiple.constrained_table_id = meta_table.id
   );
 
-DROP PROCEDURE IF EXISTS main_table_column_pretty;
+DROP PROCEDURE IF EXISTS main_table_print_pretty;
 CREATE PROCEDURE main_table_print_pretty (
   table_schema  text,
   table_name    text
@@ -93,9 +93,9 @@ BEGIN
       '| % | % | % |',
       rpad(col.column_number::text, C1W, ' '),
       rpad(col.column_name, C2W, ' '),
-      (rpad('Null', C31W, ' ') || ': ' || rpad((
+      rpad('Null', C31W, ' ') || ': ' || rpad((
         CASE WHEN col.is_nullable THEN 'NULLABLE' ELSE 'NOT NULL' END 
-      ), C32W, ' '));
+      ), C32W, ' ');
     FOR col_constr IN 
       SELECT
         contraint_name   AS name,
