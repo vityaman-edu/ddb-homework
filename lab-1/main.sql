@@ -72,18 +72,20 @@ BEGIN
   ----- ROWS -----
   FOR col IN 
     SELECT 
-      meta_table_column.name  AS column_name,
-      meta_type.name          AS type_name
+      meta_table_column.number AS column_number,
+      meta_table_column.name   AS column_name,
+      meta_type.name           AS type_name
     FROM meta_table
     JOIN meta_namespace ON meta_namespace.id = meta_table.namespace_id
     JOIN meta_table_column ON meta_table.id = meta_table_column.table_id
     JOIN meta_type ON meta_type.id = meta_table_column.type_id
     WHERE meta_namespace.name = main_table_print_pretty.table_schema
       AND meta_table.name = main_table_print_pretty.table_name
+      AND meta_table_column.number > 0
   LOOP
     RAISE INFO
       '| % | % | % |',
-      rpad(' ', C1W, ' '),
+      rpad(col.column_number::text, C1W, ' '),
       rpad(col.column_name, C2W, ' '),
       (rpad('Type', C31W, ' ') || ': ' || rpad(col.type_name, C32W, ' '));
     FOR col_constr IN 

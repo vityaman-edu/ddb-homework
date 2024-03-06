@@ -1,30 +1,63 @@
-psql:main.sql:131: INFO:  |--- Table "public.person" Information ------------------------------------------------------------------|
-psql:main.sql:131: INFO:  | N  | Name         | Attributes                                                                         |
-psql:main.sql:131: INFO:  |--------------------------------------------------------------------------------------------------------|
-psql:main.sql:131: INFO:  |    | tableoid     | Type    : oid                                                                      |
-psql:main.sql:131: INFO:  |    | cmax         | Type    : cid                                                                      |
-psql:main.sql:131: INFO:  |    | xmax         | Type    : xid                                                                      |
-psql:main.sql:131: INFO:  |    | cmin         | Type    : cid                                                                      |
-psql:main.sql:131: INFO:  |    | xmin         | Type    : xid                                                                      |
-psql:main.sql:131: INFO:  |    | ctid         | Type    : tid                                                                      |
-psql:main.sql:131: INFO:  |    | id           | Type    : numeric                                                                  |
-psql:main.sql:131: INFO:  |    |              | Constr  : person_pkey PRIMARY KEY                                                  |
-psql:main.sql:131: INFO:  |    | last_name    | Type    : varchar                                                                  |
-psql:main.sql:131: INFO:  |    | first_name   | Type    : varchar                                                                  |
-psql:main.sql:131: INFO:  |    | patronymic   | Type    : varchar                                                                  |
-psql:main.sql:131: INFO:  |    | birth_date   | Type    : date                                                                     |
-psql:main.sql:131: INFO:  |    | gender       | Type    : bpchar                                                                   |
-psql:main.sql:131: INFO:  |    |              | Constr  : person_gender_check (gender = ANY (ARRAY['M'::bpchar, 'F'::bpchar]))     |
-psql:main.sql:131: INFO:  |    |              | Constr  : person_gender_check1 (gender = ANY (ARRAY['M'::bpchar, 'F'::bpchar]))    |
-psql:main.sql:131: INFO:  |    | foreigner    | Type    : varchar                                                                  |
-psql:main.sql:131: INFO:  |    | created_who  | Type    : varchar                                                                  |
-psql:main.sql:131: INFO:  |    | created_when | Type    : date                                                                     |
-psql:main.sql:131: INFO:  |    | edited_who   | Type    : varchar                                                                  |
-psql:main.sql:131: INFO:  |    | edited_when  | Type    : date                                                                     |
-psql:main.sql:131: INFO:  |    | death_date   | Type    : date                                                                     |
-psql:main.sql:131: INFO:  |    | pin          | Type    : varchar                                                                  |
-psql:main.sql:131: INFO:  |    |              | Constr  : person_pin_key UNIQUE                                                    |
-psql:main.sql:131: INFO:  |    | inn          | Type    : varchar                                                                  |
-psql:main.sql:131: INFO:  |    |              | Constr  : person_inn_key UNIQUE                                                    |
-psql:main.sql:131: INFO:  | Constr  : person_check ((length((patronymic)::text) > 10) AND (length((last_name)::text) > 10) AND (length((first_name)::text) > 10)) |
-psql:main.sql:131: INFO:  | Constr  : person_last_name_first_name_patronymic_key UNIQUE last_name, first_name, patronymic |
+psql:meta.sql:1: NOTICE:  drop cascades to 2 other objects
+DETAIL:  drop cascades to view main_table_column_constraint
+drop cascades to view main_table_constraint
+psql:meta.sql:8: NOTICE:  drop cascades to 2 other objects
+DETAIL:  drop cascades to view meta_display_constraint_foreign_key_single
+drop cascades to view meta_display_contraint_single
+psql:meta.sql:33: NOTICE:  drop cascades to 4 other objects
+DETAIL:  drop cascades to view meta_display_constraint_check
+drop cascades to view meta_display_constraint_check_single
+drop cascades to view meta_display_constraint_check_multiple
+drop cascades to view meta_display_contraint_multiple
+psql:meta.sql:46: NOTICE:  drop cascades to view meta_display_constraint_foreign_key_multiple
+psql:meta.sql:59: NOTICE:  drop cascades to 2 other objects
+DETAIL:  drop cascades to view meta_display_constraint_primary_key_single
+drop cascades to view meta_display_constraint_primary_key_multiple
+psql:meta.sql:70: NOTICE:  drop cascades to 2 other objects
+DETAIL:  drop cascades to view meta_display_constraint_unique_single
+drop cascades to view meta_display_constraint_unique_multiple
+psql:meta_display.sql:1: NOTICE:  view "meta_display_constraint_check" does not exist, skipping
+psql:meta_display.sql:12: NOTICE:  view "meta_display_constraint_check_single" does not exist, skipping
+psql:meta_display.sql:24: NOTICE:  view "meta_display_constraint_check_multiple" does not exist, skipping
+psql:meta_display.sql:36: NOTICE:  view "meta_display_constraint_foreign_key_single" does not exist, skipping
+psql:meta_display.sql:74: NOTICE:  view "meta_display_constraint_foreign_key_multiple" does not exist, skipping
+psql:meta_display.sql:101: NOTICE:  view "meta_display_constraint_primary_key_single" does not exist, skipping
+psql:meta_display.sql:113: NOTICE:  view "meta_display_constraint_primary_key_multiple" does not exist, skipping
+psql:meta_display.sql:131: NOTICE:  view "meta_display_constraint_unique_single" does not exist, skipping
+psql:meta_display.sql:143: NOTICE:  view "meta_display_constraint_unique_multiple" does not exist, skipping
+psql:meta_display.sql:161: NOTICE:  view "meta_display_contraint_single" does not exist, skipping
+psql:meta_display.sql:177: NOTICE:  view "meta_display_contraint_multiple" does not exist, skipping
+psql:main.sql:1: NOTICE:  view "main_table_column_constraint" does not exist, skipping
+psql:main.sql:18: NOTICE:  view "main_table_constraint" does not exist, skipping
+psql:main.sql:31: NOTICE:  procedure main_table_column_pretty() does not exist, skipping
+psql:main.sql:130: ERROR:  function "main_table_print_pretty" already exists with same argument types
+psql:main.sql:132: INFO:  |--- Table "public.person" Information ------------------------------------------------------------------|
+psql:main.sql:132: INFO:  | N  | Name         | Attributes                                                                         |
+psql:main.sql:132: INFO:  |--------------------------------------------------------------------------------------------------------|
+psql:main.sql:132: INFO:  |    | tableoid     | Type    : oid                                                                      |
+psql:main.sql:132: INFO:  |    | cmax         | Type    : cid                                                                      |
+psql:main.sql:132: INFO:  |    | xmax         | Type    : xid                                                                      |
+psql:main.sql:132: INFO:  |    | cmin         | Type    : cid                                                                      |
+psql:main.sql:132: INFO:  |    | xmin         | Type    : xid                                                                      |
+psql:main.sql:132: INFO:  |    | ctid         | Type    : tid                                                                      |
+psql:main.sql:132: INFO:  |    | id           | Type    : numeric                                                                  |
+psql:main.sql:132: INFO:  |    |              | Constr  : person_pkey PRIMARY KEY                                                  |
+psql:main.sql:132: INFO:  |    | last_name    | Type    : varchar                                                                  |
+psql:main.sql:132: INFO:  |    | first_name   | Type    : varchar                                                                  |
+psql:main.sql:132: INFO:  |    | patronymic   | Type    : varchar                                                                  |
+psql:main.sql:132: INFO:  |    | birth_date   | Type    : date                                                                     |
+psql:main.sql:132: INFO:  |    | gender       | Type    : bpchar                                                                   |
+psql:main.sql:132: INFO:  |    |              | Constr  : person_gender_check (gender = ANY (ARRAY['M'::bpchar, 'F'::bpchar]))     |
+psql:main.sql:132: INFO:  |    |              | Constr  : person_gender_check1 (gender = ANY (ARRAY['M'::bpchar, 'F'::bpchar]))    |
+psql:main.sql:132: INFO:  |    | foreigner    | Type    : varchar                                                                  |
+psql:main.sql:132: INFO:  |    | created_who  | Type    : varchar                                                                  |
+psql:main.sql:132: INFO:  |    | created_when | Type    : date                                                                     |
+psql:main.sql:132: INFO:  |    | edited_who   | Type    : varchar                                                                  |
+psql:main.sql:132: INFO:  |    | edited_when  | Type    : date                                                                     |
+psql:main.sql:132: INFO:  |    | death_date   | Type    : date                                                                     |
+psql:main.sql:132: INFO:  |    | pin          | Type    : varchar                                                                  |
+psql:main.sql:132: INFO:  |    |              | Constr  : person_pin_key UNIQUE                                                    |
+psql:main.sql:132: INFO:  |    | inn          | Type    : varchar                                                                  |
+psql:main.sql:132: INFO:  |    |              | Constr  : person_inn_key UNIQUE                                                    |
+psql:main.sql:132: INFO:  | Constr  : person_check ((length((patronymic)::text) > 10) AND (length((last_name)::text) > 10) AND (length((first_name)::text) > 10)) |
+psql:main.sql:132: INFO:  | Constr  : person_last_name_first_name_patronymic_key UNIQUE last_name, first_name, patronymic |
