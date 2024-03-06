@@ -55,6 +55,7 @@ CREATE VIEW meta_constraint_primary_key AS
     pg_constraint.oid          AS id,
     pg_constraint.conname      AS name,
     pg_constraint.connamespace AS namespace_id,
+    pg_constraint.conrelid     AS constrained_table_id,
     pg_constraint.conkey       AS constrained_column_numbers
   FROM pg_constraint
   WHERE pg_constraint.contype = 'p';
@@ -65,6 +66,7 @@ CREATE VIEW meta_constraint_unique AS
     pg_constraint.oid          AS id,
     pg_constraint.conname      AS name,
     pg_constraint.connamespace AS namespace_id,
+    pg_constraint.conrelid     AS constrained_table_id,
     pg_constraint.conkey       AS constrained_column_numbers
   FROM pg_constraint
   WHERE pg_constraint.contype = 'u';

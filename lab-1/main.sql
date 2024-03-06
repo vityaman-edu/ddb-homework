@@ -13,7 +13,7 @@ LEFT JOIN meta_display_contraint_single ON (
   meta_display_contraint_single.constrained_table_id = meta_table.id AND
   meta_display_contraint_single.constrained_column_number = meta_table_column.number
 )
-WHERE meta_table.name LIKE 'person';
+WHERE meta_table.name LIKE 'item';
 
 SELECT
   meta_table.name                         AS table_name,
@@ -23,4 +23,4 @@ FROM meta_table
 LEFT JOIN meta_display_contraint_multiple ON (
   meta_display_contraint_multiple.constrained_table_id = meta_table.id
 )
-WHERE meta_table.name LIKE 'person';
+WHERE meta_table.name LIKE 'item';

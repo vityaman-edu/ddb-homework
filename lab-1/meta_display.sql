@@ -33,7 +33,7 @@ CREATE VIEW meta_display_constraint_check_multiple AS
   FROM meta_display_constraint_check
   WHERE cardinality(meta_display_constraint_check.constrained_column_numbers) != 1;
 
-DROP VIEW IF EXISTS meta_constraint_foreign_key_single CASCADE;
+DROP VIEW IF EXISTS meta_display_constraint_foreign_key_single CASCADE;
 CREATE VIEW meta_display_constraint_foreign_key_single AS 
   SELECT 
     meta_constraint_foreign_key.id                            AS id,
@@ -71,7 +71,7 @@ BEGIN
 END; 
 $$ LANGUAGE plpgsql;
 
-DROP VIEW IF EXISTS meta_constraint_foreign_key_multiple CASCADE;
+DROP VIEW IF EXISTS meta_display_constraint_foreign_key_multiple CASCADE;
 CREATE VIEW meta_display_constraint_foreign_key_multiple AS 
   SELECT 
     meta_constraint_foreign_key.id                         AS id,
@@ -98,53 +98,59 @@ CREATE VIEW meta_display_constraint_foreign_key_multiple AS
    cardinality(meta_constraint_foreign_key.referenced_column_numbers) != 1
   );
 
+DROP VIEW IF EXISTS meta_display_constraint_primary_key_single CASCADE;
+CREATE VIEW meta_display_constraint_primary_key_single AS
+  SELECT
+    meta_constraint_primary_key.id                            AS id,
+    meta_constraint_primary_key.name                          AS name,
+    meta_constraint_primary_key.namespace_id                  AS namespace_id,
+    meta_constraint_primary_key.constrained_table_id          AS constrained_table_id,
+    meta_constraint_primary_key.constrained_column_numbers[1] AS constrained_column_number,
+    'PRIMARY KEY'                                             AS clause
+  FROM meta_constraint_primary_key
+  WHERE cardinality(meta_constraint_primary_key.constrained_column_numbers) = 1;
+
+DROP VIEW IF EXISTS meta_display_constraint_primary_key_multiple CASCADE;
+CREATE VIEW meta_display_constraint_primary_key_multiple AS
+  SELECT
+    meta_constraint_primary_key.id                          AS id,
+    meta_constraint_primary_key.name                        AS name,
+    meta_constraint_primary_key.namespace_id                AS namespace_id,
+    meta_constraint_primary_key.constrained_table_id        AS constrained_table_id,
+    meta_constraint_primary_key.constrained_column_numbers  AS constrained_column_numbers,
+    (
+      'PRIMARY KEY ' || (
+        SELECT string_agg(meta_display_column_name(constrained_table_id, constrained_column_number), ', ') 
+        FROM unnest(meta_constraint_primary_key.constrained_column_numbers) 
+        AS constrained_column_number
+      )
+    )                                                       AS clause
+  FROM meta_constraint_primary_key
+  WHERE cardinality(meta_constraint_primary_key.constrained_column_numbers) != 1;
+
+
 DROP VIEW IF EXISTS meta_display_contraint_single CASCADE;
 CREATE VIEW meta_display_contraint_single AS
-  SELECT 
-    id,
-    name,
-    namespace_id,
-    constrained_table_id,
-    constrained_column_number,
-    clause
-  FROM (
-    (
-      SELECT 
-        id,
-        name,
-        namespace_id,
-        constrained_table_id,
-        constrained_column_number,
-        clause 
-      FROM meta_display_constraint_check_single
-    ) UNION (
-      SELECT 
-        id,
-        name,
-        namespace_id,
-        constrained_table_id,
-        constrained_column_number,
-        clause
-      FROM meta_display_constraint_foreign_key_single
-    )
+  (
+    SELECT id, name, namespace_id, constrained_table_id, constrained_column_number, clause 
+    FROM meta_display_constraint_check_single
+  ) UNION ALL (
+    SELECT id, name, namespace_id, constrained_table_id, constrained_column_number, clause
+    FROM meta_display_constraint_foreign_key_single
+  ) UNION ALL (
+    SELECT id, name, namespace_id, constrained_table_id, constrained_column_number, clause
+    FROM meta_display_constraint_primary_key_single
   );
 
 DROP VIEW IF EXISTS meta_display_contraint_multiple CASCADE;
 CREATE VIEW meta_display_contraint_multiple AS
   (
-    SELECT
-      id,
-      name,
-      namespace_id,
-      constrained_table_id,
-      clause
+    SELECT id, name, namespace_id, constrained_table_id, clause
     FROM meta_display_constraint_check_multiple
   ) UNION ALL (
-    SELECT
-      id,
-      name,
-      namespace_id,
-      constrained_table_id,
-      clause 
+    SELECT id, name, namespace_id, constrained_table_id, clause 
     FROM meta_display_constraint_foreign_key_multiple
+  ) UNION ALL (
+    SELECT id, name, namespace_id, constrained_table_id, clause 
+    FROM meta_display_constraint_primary_key_multiple
   );
