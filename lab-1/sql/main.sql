@@ -148,11 +148,13 @@ BEGIN
       main_table_constraint.schema_name = main_table_print_pretty.table_schema AND
       main_table_constraint.table_name = main_table_print_pretty.table_name
   LOOP
-    RAISE INFO 
-      '| % |',
-      (rpad('Constr', C31W, ' ') || ': ' ||
-      (col.constraint_name || ' ' || col.constraint_clause))
-      ;
+    IF NOT col IS NULL THEN
+      RAISE INFO 
+        '| % |',
+        (rpad('Constr', C31W, ' ') || ': ' ||
+        (col.constraint_name || ' ' || col.constraint_clause))
+        ;
+    END IF;
   END LOOP;
 END;
 $$ language plpgsql;
@@ -168,6 +170,10 @@ begin
   from information_schema.tables
   where information_schema.tables.table_name = solution.table_name
   limit 1;
+
+  IF table_schema IS NULL THEN
+    RAISE 'Table "%" not found!', table_name;
+  END IF;
 
   call main_table_print_pretty(table_schema, table_name);
 end;
