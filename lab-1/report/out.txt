@@ -1,44 +1,30 @@
 |--- Table "public.person" Information ------------------------------------------------------------------|
 | N  | Name         | Attributes                                                                         |
 |--------------------------------------------------------------------------------------------------------|
-| 1  | id           | Type    : numeric                                                                  |
-|    |              | Null    : NOT NULL                                                                 |
+| 1  | id           | Type    : numeric NOT NULL                                                         |
 |    |              | Comment : The unique number of the person                                          |
 |    |              | Constr  : person_pkey PRIMARY KEY                                                  |
-| 2  | last_name    | Type    : varchar                                                                  |
-|    |              | Null    : NOT NULL                                                                 |
+| 2  | last_name    | Type    : varchar(25) NOT NULL                                                     |
 |    |              | Comment : Last name of the person                                                  |
-| 3  | first_name   | Type    : varchar                                                                  |
-|    |              | Null    : NOT NULL                                                                 |
+| 3  | first_name   | Type    : varchar(2000) NOT NULL                                                   |
 |    |              | Comment : The name of the person                                                   |
-| 4  | patronymic   | Type    : varchar                                                                  |
-|    |              | Null    : NULLABLE                                                                 |
+| 4  | patronymic   | Type    : varchar(20) NULLABLE                                                     |
 |    |              | Comment : The patronymic of the person                                             |
-| 5  | birth_date   | Type    : date                                                                     |
-|    |              | Null    : NOT NULL                                                                 |
+| 5  | birth_date   | Type    : date NOT NULL                                                            |
 |    |              | Comment : Date of birth of a person                                                |
-| 6  | gender       | Type    : bpchar                                                                   |
-|    |              | Null    : NOT NULL                                                                 |
+| 6  | gender       | Type    : bpchar NOT NULL                                                          |
 |    |              | Constr  : person_gender_check (gender = ANY (ARRAY['M'::bpchar, 'F'::bpchar]))     |
 |    |              | Constr  : person_gender_check1 (gender = ANY (ARRAY['M'::bpchar, 'F'::bpchar]))    |
-| 7  | foreigner    | Type    : varchar                                                                  |
-|    |              | Null    : NOT NULL                                                                 |
-| 8  | created_who  | Type    : varchar                                                                  |
-|    |              | Null    : NOT NULL                                                                 |
-| 9  | created_when | Type    : date                                                                     |
-|    |              | Null    : NOT NULL                                                                 |
-| 10 | edited_who   | Type    : varchar                                                                  |
-|    |              | Null    : NOT NULL                                                                 |
-| 11 | edited_when  | Type    : date                                                                     |
-|    |              | Null    : NOT NULL                                                                 |
-| 12 | death_date   | Type    : date                                                                     |
-|    |              | Null    : NULLABLE                                                                 |
+| 7  | foreigner    | Type    : varchar(3) NOT NULL                                                      |
+| 8  | created_who  | Type    : varchar(40) NOT NULL                                                     |
+| 9  | created_when | Type    : date NOT NULL                                                            |
+| 10 | edited_who   | Type    : varchar(40) NOT NULL                                                     |
+| 11 | edited_when  | Type    : date NOT NULL                                                            |
+| 12 | death_date   | Type    : date NULLABLE                                                            |
 |    |              | Comment : Date of death of a person                                                |
-| 13 | pin          | Type    : varchar                                                                  |
-|    |              | Null    : NULLABLE                                                                 |
+| 13 | pin          | Type    : varchar(20) NULLABLE                                                     |
 |    |              | Constr  : person_pin_key UNIQUE                                                    |
-| 14 | inn          | Type    : varchar                                                                  |
-|    |              | Null    : NULLABLE                                                                 |
+| 14 | inn          | Type    : varchar(20) NULLABLE                                                     |
 |    |              | Constr  : person_inn_key UNIQUE                                                    |
 | Constr  : person_check ((length((patronymic)::text) > 10) AND (length((last_name)::text) > 10) AND (length((first_name)::text) > 10)) |
 | Constr  : person_last_name_first_name_patronymic_key UNIQUE last_name, first_name, patronymic |

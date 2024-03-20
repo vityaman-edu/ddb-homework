@@ -16,11 +16,12 @@ CREATE VIEW meta_table AS
 DROP VIEW IF EXISTS meta_table_column CASCADE;
 CREATE VIEW meta_table_column AS 
   SELECT 
-    pg_attribute.attrelid         AS table_id,
-    pg_attribute.attnum           AS number,
-    pg_attribute.attname          AS name, 
-    pg_attribute.atttypid         AS type_id,
-    (NOT pg_attribute.attnotnull) AS is_nullable
+    pg_attribute.attrelid              AS table_id,
+    pg_attribute.attnum                AS number,
+    pg_attribute.attname               AS name, 
+    pg_attribute.atttypid              AS type_id,
+    NULLIF(pg_attribute.atttypmod, -1) AS type_data,
+    (NOT pg_attribute.attnotnull)      AS is_nullable
   FROM pg_attribute;
 
 DROP VIEW IF EXISTS meta_comment CASCADE;
