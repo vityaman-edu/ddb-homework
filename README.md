@@ -1,1 +1,1 @@
-# ddb-assignments
+# Distributed Databases Assignments
