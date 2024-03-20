@@ -24,7 +24,8 @@ create table person (
   ),
   unique (last_name, first_name, patronymic),
   unique (inn),
-  unique (pin)
+  unique (pin),
+  exclude (inn WITH =)
 );
 
 drop table if exists item;

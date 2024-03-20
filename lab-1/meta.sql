@@ -38,6 +38,13 @@ CREATE VIEW meta_type AS
     pg_type.typname AS name
   FROM pg_type;
 
+DROP VIEW IF EXISTS meta_operator CASCADE;
+CREATE VIEW meta_operator AS
+  SELECT
+    pg_operator.oid       AS id,
+    pg_operator.oprname   AS name
+  FROM pg_operator;
+
 DROP VIEW IF EXISTS meta_constraint_check CASCADE;
 CREATE VIEW meta_constraint_check AS 
   SELECT 
@@ -86,5 +93,14 @@ CREATE VIEW meta_constraint_unique AS
   FROM pg_constraint
   WHERE pg_constraint.contype = 'u';
 
--- TODO: t = constraint trigger
--- TODO: x = exclusion constraint
+DROP VIEW IF EXISTS meta_constraint_exclusion CASCADE;
+CREATE VIEW meta_constraint_exclusion AS 
+  SELECT 
+    pg_constraint.oid          AS id,
+    pg_constraint.conname      AS name,
+    pg_constraint.connamespace AS namespace_id,
+    pg_constraint.conrelid     AS constrained_table_id,
+    pg_constraint.conkey       AS constrained_column_numbers,
+    pg_constraint.conexclop    AS per_column_operator_ids
+  FROM pg_constraint
+  WHERE pg_constraint.contype = 'x';

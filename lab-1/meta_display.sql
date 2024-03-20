@@ -158,6 +158,30 @@ CREATE VIEW meta_display_constraint_unique_multiple AS
   FROM meta_constraint_unique
   WHERE cardinality(meta_constraint_unique.constrained_column_numbers) != 1;
 
+DROP VIEW IF EXISTS meta_display_constraint_exclusion CASCADE;
+CREATE VIEW meta_display_constraint_exclusion_multiple AS 
+  SELECT
+    meta_constraint_exclusion.id                         AS id,
+    meta_constraint_exclusion.name                       AS name,
+    meta_constraint_exclusion.namespace_id               AS namespace_id,
+    meta_constraint_exclusion.constrained_table_id       AS constrained_table_id,
+    meta_constraint_exclusion.constrained_column_numbers AS constrained_column_numbers,
+    (
+      'EXCLUDE ' || (
+        SELECT 
+          string_agg((
+            meta_display_column_name(constrained_table_id, column_number)
+            || ' WITH ' || meta_operator.name
+          ), ', ') 
+        FROM unnest(
+          meta_constraint_exclusion.constrained_column_numbers,
+          meta_constraint_exclusion.per_column_operator_ids
+        ) WITH ORDINALITY AS column_operator(column_number, operator_id)
+        JOIN meta_operator ON meta_operator.id = column_operator.operator_id
+      )
+    )                                                 AS clause
+  FROM meta_constraint_exclusion;
+
 DROP VIEW IF EXISTS meta_display_contraint_single CASCADE;
 CREATE VIEW meta_display_contraint_single AS
   (
@@ -188,4 +212,7 @@ CREATE VIEW meta_display_contraint_multiple AS
   ) UNION ALL (
     SELECT id, name, namespace_id, constrained_table_id, clause 
     FROM meta_display_constraint_unique_multiple
+  ) UNION ALL (
+    SELECT id, name, namespace_id, constrained_table_id, clause 
+    FROM meta_display_constraint_exclusion_multiple
   );
