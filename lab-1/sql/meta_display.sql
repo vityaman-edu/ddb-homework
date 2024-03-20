@@ -170,8 +170,11 @@ CREATE VIEW meta_display_constraint_exclusion_multiple AS
       'EXCLUDE ' || (
         SELECT 
           string_agg((
-            meta_display_column_name(constrained_table_id, column_number)
-            || ' WITH ' || meta_operator.name
+            '(' 
+            || meta_display_column_name(constrained_table_id, column_number)
+            || ' WITH ' 
+            || meta_operator.name || 
+            ')'
           ), ', ') 
         FROM unnest(
           meta_constraint_exclusion.constrained_column_numbers,

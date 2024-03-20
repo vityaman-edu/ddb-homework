@@ -28,4 +28,4 @@
 |    |              | Constr  : person_inn_key UNIQUE                                                    |
 | Constr  : person_check ((length((patronymic)::text) > 10) AND (length((last_name)::text) > 10) AND (length((first_name)::text) > 10)) |
 | Constr  : person_last_name_first_name_patronymic_key UNIQUE last_name, first_name, patronymic |
-| Constr  : person_inn_excl EXCLUDE inn WITH = |
+| Constr  : person_inn_excl EXCLUDE (inn WITH =) |
