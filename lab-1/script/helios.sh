@@ -1,5 +1,6 @@
 set -o errexit
 cd $(dirname -- $0)
+cd ../sql
 
 print() {
   YC="\033[1;34m" # Yes Color

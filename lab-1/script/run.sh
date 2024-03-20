@@ -1,5 +1,6 @@
 set -o errexit
 cd $(dirname -- $0)
+cd ../sql
 
 print() {
   YC="\033[1;34m" # Yes Color
@@ -21,10 +22,5 @@ run initialize.sql
 run meta.sql
 run meta_display.sql
 run main.sql
-
-# run table_column.sql
-# run table_column_pretty.sql
-# run print_table_info.sql
-# run get_table_info.sql
 
 print "Done."
