@@ -8,3 +8,7 @@ RUN sh -c 'echo "deb https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)
 RUN apt-get update
 
 RUN DEBIAN_FRONTEND=noninteractive apt-get -y install postgresql-14
+
+RUN apt-get -y install locales locales-all
+
+RUN apt-get -y install vim
