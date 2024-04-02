@@ -1,6 +1,7 @@
 export POSTGRES_USER=postgres
 export POSTGRES_CONFIG_DIRECTORY="./config"
 export POSTGRES_SUPER_USER_PASSWORD_FILE="$POSTGRES_CONFIG_DIRECTORY/postgres_su_password.txt"
+export POSTGRES_PORT=9666
 export PGDATA="./kop67"
 
 mkdir   $PGDATA                     2> /dev/null
