@@ -3,7 +3,7 @@ export NEW=lazyorangehair
 export TABLESPACE_NAME=yqy90
 
 sql() {
-  psql -h localhost -p $POSTGRES_PORT -c "$2" "$1"
+  psql -U $NEW_USER -h localhost -p $POSTGRES_PORT -c "$2" "$1"
 }
 
 sql $PRV "CREATE TABLE note_prv (id serial PRIMARY KEY, content text NOT NULL);"
