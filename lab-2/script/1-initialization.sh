@@ -8,6 +8,5 @@ mkdir   $PGDATA                     2> /dev/null
 
 adduser $POSTGRES_USER              2>/dev/null
 chown   $POSTGRES_USER $PGDATA
-chmod   og+r $POSTGRES_CONFIG_DIRECTORY
 
 su      $POSTGRES_USER
