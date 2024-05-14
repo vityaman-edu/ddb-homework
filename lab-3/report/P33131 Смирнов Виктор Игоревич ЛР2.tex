@@ -1,0 +1,185 @@
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[english, russian]{babel}
+\usepackage[a4paper, margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{wrapfig}
+\usepackage{multirow}
+\usepackage{mathtools}
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+\usepackage{setspace}
+\usepackage{changepage}
+\usepackage{caption}
+\usepackage{csquotes}
+\usepackage{hyperref}
+\usepackage{listings}
+
+\pgfplotsset{compat=1.18}
+\hypersetup{
+  colorlinks = true,
+  linkcolor  = blue,
+  filecolor  = magenta,      
+  urlcolor   = darkgray,
+  pdftitle   = ddb-report-3-smirnov-victor-p33131,
+}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.99,0.99,0.99}
+
+\lstdefinestyle{codestyle}{
+  backgroundcolor   = \color{backcolour},   
+  commentstyle      = \color{codegreen},
+  keywordstyle      = \color{magenta},
+  numberstyle       = \tiny\color{codegray},
+  stringstyle       = \color{codepurple},
+  basicstyle        = \ttfamily\footnotesize,
+  breakatwhitespace = false,         
+  breaklines        = true,                 
+  captionpos        = b,                    
+  keepspaces        = true,                 
+  numbers           = left,                    
+  numbersep         = 5pt,                  
+  showspaces        = false,                
+  showstringspaces  = false,
+  showtabs          = false,                  
+  tabsize           = 2
+}
+
+\lstset{style=codestyle}
+
+\begin{document}
+
+\begin{titlepage}
+    \begin{center}
+        \begin{spacing}{1.4}
+            \large{Университет ИТМО} \\
+            \large{Факультет программной инженерии и компьютерной техники} \\
+        \end{spacing}
+        \vfill
+        \textbf{
+            \huge{Распределённые системы хранения данных.} \\
+            \huge{Лабораторная работа №3.} \\
+        }
+    \end{center}
+    \vfill
+    \begin{center}
+        \begin{tabular}{r l}
+            Группа:        & P33131                      \\
+            Студент:       & Смирнов Виктор Игоревич     \\
+            Преподаватель: & Афанасьев Дмитрий Борисович \\
+            Вариант:       & 736                         \\
+        \end{tabular}
+    \end{center}
+    \vfill
+    \begin{center}
+        \begin{large}
+            2024
+        \end{large}
+    \end{center}
+\end{titlepage}
+
+\section*{Ключевые слова}
+
+База данных, конфигурация PostgreSQL.
+
+\tableofcontents
+
+\section{Цель работы и контекст}
+
+Цель работы - настроить процедуру периодического резервного копирования базы данных, сконфигурированной в ходе выполнения лабораторной работы №2, а также разработать и отладить сценарии восстановления в случае сбоев.
+
+Узел из предыдущей лабораторной работы используется в качестве основного. Новый узел используется в качестве резервного. Учётные данные для подключения к новому узлу выдаёт преподаватель. В сценариях восстановления необходимо использовать копию данных, полученную на первом этапе данной лабораторной работы.
+
+\section{Этап 1. Резервное копирование}
+
+\subsection{Задача}
+
+\begin{enumerate}
+    \item Настроить резервное копирование с основного узла на резервный следующим образом:
+    \begin{enumerate}
+        \item Первоначальная полная копия + непрерывное архивирование.
+        \item Включить для СУБД режим архивирования WAL;
+        \item настроить копирование WAL (scp) на резервный узел;
+        \item создать первоначальную резервную копию (pg\_basebackup),
+        \item скопировать на резервный узел (rsync).
+    \end{enumerate}
+    \item Подсчитать, каков будет объем резервных копий спустя месяц работы системы, исходя из следующих условий:
+    \begin{enumerate}
+        \item Средний объем новых данных в БД за сутки: 650МБ.
+        \item Средний объем измененных данных за сутки: 950МБ.
+    \end{enumerate}
+    \item Проанализировать результаты.
+\end{enumerate}
+
+\subsection{Решение}
+
+TODO
+
+\section{Этап 2. Потеря основного узла}
+
+\subsection{Задача}
+
+Этот сценарий подразумевает полную недоступность основного узла. Необходимо восстановить работу СУБД на РЕЗЕРВНОМ узле, продемонстрировать успешный запуск СУБД и доступность данных.
+
+\subsection{Решение}
+
+TODO
+
+\section{Этап 3. Повреждение файлов БД}
+
+\subsection{Задача}
+
+Этот сценарий подразумевает потерю данных (например, в результате сбоя диска или файловой системы) при сохранении доступности основного узла. Необходимо выполнить полное восстановление данных из резервной копии и перезапустить СУБД на ОСНОВНОМ узле.
+
+
+Ход работы:
+
+\begin{enumerate}
+    \item Симулировать сбой: удалить с диска директорию любой таблицы со всем содержимым.
+    \item Проверить работу СУБД, доступность данных, перезапустить СУБД, проанализировать результаты.
+    \item Выполнить восстановление данных из резервной копии, учитывая следующее условие: исходное расположение дополнительных табличных пространств недоступно - разместить в другой директории и скорректировать конфигурацию.
+    \item Запустить СУБД, проверить работу и доступность данных, проанализировать результаты.
+\end{enumerate}
+
+\subsection{Решение}
+
+TODO
+
+\section{Этап 4. Логическое повреждение данных}
+
+\subsection{Задача}
+
+Этот сценарий подразумевает частичную потерю данных (в результате нежелательной или ошибочной операции) при сохранении доступности основного узла. Необходимо выполнить восстановление данных на ОСНОВНОМ узле следующим способом:
+
+Генерация файла на резервном узле с помощью pg\_dump и последующее применение файла на основном узле.
+
+Ход работы:
+
+\begin{enumerate}
+    \item В каждую таблицу базы добавить 2-3 новые строки, зафиксировать результат.
+    \item Зафиксировать время и симулировать ошибку: в любой таблице с внешними ключами подменить значения ключей на случайные (INSERT, UPDATE)
+    \item Продемонстрировать результат.
+    \item Выполнить восстановление данных указанным способом.
+    \item Продемонстрировать и проанализировать результат.
+\end{enumerate}
+
+\subsection{Решение}
+
+TODO
+
+\section{Вывод}
+
+Данная лабораторная работа помогла мне изучить конфигурацию PostgreSQL.
+
+\begin{thebibliography}{99}
+    \bibitem{PSQLSC} 
+        PostgreSQL Documentation: сайт. - 2024. 
+        - URL: \url{https://www.postgresql.org/docs/14/index.html} (дата обращения: 06.04.2024) - Текст : электронный.
+\end{thebibliography}
+
+\end{document}
