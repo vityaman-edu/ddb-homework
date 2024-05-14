@@ -1,1 +1,1 @@
-$PG_BIN/postgres -D $PGDATA
+postgres -D $PGDATA

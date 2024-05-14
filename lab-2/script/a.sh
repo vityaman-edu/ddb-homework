@@ -1,0 +1,1 @@
+psql -h localhost -p 9666 -d lazyorangehair -f a.sql

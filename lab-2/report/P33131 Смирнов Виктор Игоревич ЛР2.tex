@@ -1,0 +1,190 @@
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[english, russian]{babel}
+\usepackage[a4paper, margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{wrapfig}
+\usepackage{multirow}
+\usepackage{mathtools}
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+\usepackage{setspace}
+\usepackage{changepage}
+\usepackage{caption}
+\usepackage{csquotes}
+\usepackage{hyperref}
+\usepackage{listings}
+
+\pgfplotsset{compat=1.18}
+\hypersetup{
+  colorlinks = true,
+  linkcolor  = blue,
+  filecolor  = magenta,      
+  urlcolor   = darkgray,
+  pdftitle   = ddb-report-2-smirnov-victor-p33131,
+}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.99,0.99,0.99}
+
+\lstdefinestyle{codestyle}{
+  backgroundcolor   = \color{backcolour},   
+  commentstyle      = \color{codegreen},
+  keywordstyle      = \color{magenta},
+  numberstyle       = \tiny\color{codegray},
+  stringstyle       = \color{codepurple},
+  basicstyle        = \ttfamily\footnotesize,
+  breakatwhitespace = false,         
+  breaklines        = true,                 
+  captionpos        = b,                    
+  keepspaces        = true,                 
+  numbers           = left,                    
+  numbersep         = 5pt,                  
+  showspaces        = false,                
+  showstringspaces  = false,
+  showtabs          = false,                  
+  tabsize           = 2
+}
+
+\lstset{style=codestyle}
+
+\begin{document}
+
+\begin{titlepage}
+    \begin{center}
+        \begin{spacing}{1.4}
+            \large{Университет ИТМО} \\
+            \large{Факультет программной инженерии и компьютерной техники} \\
+        \end{spacing}
+        \vfill
+        \textbf{
+            \huge{Распределённые системы хранения данных.} \\
+            \huge{Лабораторная работа №2.} \\
+        }
+    \end{center}
+    \vfill
+    \begin{center}
+        \begin{tabular}{r l}
+            Группа:        & P33131                      \\
+            Студент:       & Смирнов Виктор Игоревич     \\
+            Преподаватель: & Афанасьев Дмитрий Борисович \\
+            Вариант:       & 666                         \\
+        \end{tabular}
+    \end{center}
+    \vfill
+    \begin{center}
+        \begin{large}
+            2024
+        \end{large}
+    \end{center}
+\end{titlepage}
+
+\section*{Ключевые слова}
+
+База данных, конфигурация PostgreSQL.
+
+\tableofcontents
+
+\section{Цель работы}
+
+На выделенном узле создать и сконфигурировать новый кластер БД Postgres, саму БД, табличные пространства и новую роль, а также произвести наполнение базы в соответствии с заданием. Отчёт по работе должен содержать все команды по настройке, скрипты, а также измененные строки конфигурационных файлов.
+
+\section{Текст задания}
+
+\subsection{Инициализация кластера БД}
+
+\begin{enumerate}
+    \item Директория кластера: \$HOME/kop67
+    \item Кодировка: ANSI1251
+    \item Локаль: русская
+    \item Параметры инициализации задать через аргументы команды
+\end{enumerate}
+
+\subsection{Конфигурация и запуск сервера БД}
+
+\begin{enumerate}
+    \item Способ подключения: сокет TCP/IP, только localhost
+    \item Номер порта: 9666
+    \item Остальные способы подключений запретить.
+    \item Способ аутентификации клиентов: по имени пользователя
+    \item Настроить следующие параметры сервера БД:
+    \begin{enumerate}
+        \item max\_connections
+        \item shared\_buffers
+        \item temp\_buffers
+        \item work\_mem
+        \item checkpoint\_timeout
+        \item effective\_cache\_size
+        \item fsync
+        \item commit\_delay
+    \end{enumerate}
+    \item Параметры должны быть подобраны в соответствии со сценарием OLAP:
+    \begin{itemize}
+        \item 5 одновременных пользователей
+        \item пакетная запись/чтение данных по 128МБ.
+    \end{itemize}
+    \item Директория WAL файлов: \$PGDATA/pg\_wal
+    \item Формат лог-файлов: .log
+    \item Уровень сообщений лога: WARNING
+    \item Дополнительно логировать: попытки подключения и завершение сессий
+\end{enumerate}
+
+\subsection{Дополнительные табличные пространства и наполнение базы}
+
+\begin{enumerate}
+    \item Пересоздать шаблон template1 в новом табличном пространстве: \$HOME/yqy90
+    \item На основе template1 создать новую базу: lazyorangehair
+    \item Создать новую роль, предоставить необходимые права, разрешить подключение к базе.
+    \item От имени новой роли (не администратора) произвести наполнение всех созданных баз тестовыми наборами данных. Все табличные пространства должны использоваться по назначению.
+    \item Вывести список всех табличных пространств кластера и содержащиеся в них объекты.
+\end{enumerate}
+
+\section{Ход работы}
+
+\subsection{Порядок конфигурации кластера}
+\lstinputlisting[language=Bash]{../script/pipeline.sh}
+
+\subsection{Подготовка к установке}
+\lstinputlisting[language=Bash]{../script/1-initialization.sh}
+
+\subsection{Инициализация датабазы}
+\lstinputlisting[language=Bash]{../script/2-create.sh}
+
+\subsection{Установка конфигурационных файлов}
+\lstinputlisting[language=Bash]{../script/3-configuration.sh}
+
+\subsection{Host-based authentication}
+\lstinputlisting[language=Bash]{../config/pg_hba.conf}
+
+\subsection{Главный конфигурационный файл}
+Кроме требуемых параметров попытался подкрутить из интереса. Было бы интересно узнать, насколько адекватные решения я принял.
+\lstinputlisting[language=Bash]{../config/postgresql.conf}
+
+\subsection{Запуск датабазы}
+\lstinputlisting[language=Bash]{../script/4-start.sh}
+
+\subsection{Создание табличного пространства и новой датабазы}
+\lstinputlisting[language=Bash]{../script/5-recreate-template.sh}
+
+\subsection{Заполнение новой датабазы}
+\lstinputlisting[language=Bash]{../script/6-fill-tables.sh}
+
+\subsection{Вывод табличных пространств кластера и объектов}
+\lstinputlisting[language=Bash]{../script/7-print.sh}
+\lstinputlisting[language=SQL]{../script/tablespace.sql}
+
+\section{Вывод}
+
+Данная лабораторная работа помогла мне изучить конфигурацию PostgreSQL.
+
+\begin{thebibliography}{99}
+    \bibitem{PSQLSC} 
+        PostgreSQL Documentation, System Catalogs: сайт. - 2024. 
+        - URL: \url{https://www.postgresql.org/docs/14/index.html} (дата обращения: 06.04.2024) - Текст : электронный.
+\end{thebibliography}
+
+\end{document}

@@ -1,6 +1,6 @@
 export PG_BIN=/usr/lib/postgresql/14/bin
 
-"$PG_BIN/initdb" \
+"initdb" \
   --pgdata=$PGDATA \
   --locale="ru_RU.CP1251" \
   --encoding=WIN1251 \
