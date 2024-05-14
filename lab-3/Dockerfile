@@ -14,3 +14,7 @@ RUN apt-get -y install locales locales-all
 RUN apt-get -y install vim
 
 RUN mkdir workspace
+
+RUN useradd -ms /bin/bash postgres0
+USER postgres0
+WORKDIR /home/postgres0

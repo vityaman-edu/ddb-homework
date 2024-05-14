@@ -5,7 +5,7 @@ cluster-down:
 	docker compose down
 
 primary-sh:
-	docker exec -it ddb-primary sh
+	docker exec -it ddb-primary bash
 
 standby-sh:
-	docker exec -it ddb-standby sh
+	docker exec -it ddb-standby bash
