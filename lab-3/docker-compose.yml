@@ -1,0 +1,37 @@
+version: '3.8'
+services:
+  primary:
+    container_name: ddb-primary
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5432:5432"
+    networks:
+      - ddb-network
+    stdin_open: true
+    tty: true
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  standby:
+    container_name: ddb-standby
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5433:5433"
+    networks:
+      - ddb-network
+    stdin_open: true
+    tty: true
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+networks:
+  ddb-network:
+    driver: bridge
