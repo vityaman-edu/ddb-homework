@@ -17,3 +17,9 @@ export PGDATA="$HOME/kop67"
 
 export DDB_INITDB=/usr/lib/postgresql/14/bin/initdb
 export DDB_PGBIN=/usr/lib/postgresql/14/bin/postgres
+export DDB_PGBASEBACKUP=/usr/lib/postgresql/14/bin/pg_basebackup
+
+export DDB_STANDBY_HOST=ddb-standby
+export DDB_PRIMARY_BACKUP_BASE_DIR="primary/backup/base"
+export DDB_STANDBY_BACKUP_BASE_DIR=$DDB_PRIMARY_BACKUP_BASE_DIR
+export DDB_STANDBY_BACKUP_WAL_DIR="primary/backup/wal"

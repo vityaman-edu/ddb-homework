@@ -1,8 +1,12 @@
 #!/bin/sh
 
+set -e
+
 cd "$(dirname "$0")"
 
 mkdir "$PGDATA" 2> /dev/null
+
+echo "$DDB_PG_PASS" > "$DDB_PG_PASS_FILE"
 
 "$DDB_INITDB" \
   --pgdata="$PGDATA" \

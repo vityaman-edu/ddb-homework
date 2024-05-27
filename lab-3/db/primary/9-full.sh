@@ -1,10 +1,12 @@
 #!/bin/sh
 
-echo "[primary] Setting up environment variables..."
-source primary/0-env.sh
+set -e
 
 echo "[primary] Creating '.pgpass' file..."
-sh primary/0-pgpass.sh
+sh common/0-pgpass.sh
+
+echo "[primary] Editing 'postgresql.conf' file..."
+sh primary/1-config.sh
 
 echo "[primary] Initializing the database..."
 sh primary/1-init.sh
