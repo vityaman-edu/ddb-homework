@@ -22,7 +22,7 @@ while read -r line; do
 
     echo "[standby][$TABLESPACE_OID] Extracting..."
     tar --extract \
-        -f $HOME/$DDB_BACKUP_BASE_DIR/$TABLESPACE_OID.tar \
+        -f "~/$DDB_BACKUP_BASE_DIR/$TABLESPACE_OID.tar" \
         --directory=$TABLESPACE_DIR
 
     echo "[standby][$TABLESPACE_OID] Creating symbolic link..."
@@ -34,7 +34,7 @@ rm $PGDATA/tablespace_map
 
 # Patching is used as we need to change values depending on env variables
 echo "[standby] Patching postgresql.conf: add 'restore_command'..."
-RESTORE_CMD="restore_command = 'cp $HOME/$DDB_BACKUP_WAL_DIR/%f %p'"
+RESTORE_CMD="restore_command = 'cp ~/$DDB_BACKUP_WAL_DIR/%f %p'"
 echo "\n$RESTORE_CMD\n" >> $PGDATA/postgresql.conf
 
 echo "[standby] Patching postgresql.conf: disable archive..."
