@@ -95,30 +95,160 @@
 
 Узел из предыдущей лабораторной работы используется в качестве основного. Новый узел используется в качестве резервного. Учётные данные для подключения к новому узлу выдаёт преподаватель. В сценариях восстановления необходимо использовать копию данных, полученную на первом этапе данной лабораторной работы.
 
+\section{Этап 0. Контекст работы}
+
+В предыдущей лабораторной работы была создана база данных. Приведу здесь скрипты для ее инициализации.
+
+\subsection{Переменные окружения}
+
+\lstinputlisting[
+    language=bash,
+    caption={Переменные окружения}
+]{../db/common/0-env.sh}
+
+\subsection{Конфигурация базы данных}
+
+\lstinputlisting[
+    language=bash,
+    caption={Конфигурационный файл pg\_hba.conf}
+]{../db/primary/pg_hba.conf}
+
+\lstinputlisting[
+    language=bash,
+    caption={Конфигурационный файл postgresql.conf}
+]{../db/primary/postgresql.conf}
+
+\subsection{Создание .pgpass}
+
+\lstinputlisting[
+    language=bash,
+    caption={Файл .pgpass}
+]{../db/common/0-pgpass.sh}
+
+\subsection{Инициализация базы данных}
+
+\lstinputlisting[
+    language=bash,
+    caption={Инициализация базы данных}
+]{../db/primary/1-init.sh}
+
+\subsection{Запуск базы данных}
+
+\lstinputlisting[
+    language=bash,
+    caption={Запуск базы данных}
+]{../db/common/2-start.sh}
+
+\subsection{Настройка базы данных}
+
+\lstinputlisting[
+    language=bash,
+    caption={Настройка базы данных}
+]{../db/primary/3-setup.sh}
+
 \section{Этап 1. Резервное копирование}
 
 \subsection{Задача}
 
 \begin{enumerate}
     \item Настроить резервное копирование с основного узла на резервный следующим образом:
-    \begin{enumerate}
-        \item Первоначальная полная копия + непрерывное архивирование.
-        \item Включить для СУБД режим архивирования WAL;
-        \item настроить копирование WAL (scp) на резервный узел;
-        \item создать первоначальную резервную копию (pg\_basebackup),
-        \item скопировать на резервный узел (rsync).
-    \end{enumerate}
+          \begin{enumerate}
+              \item Первоначальная полная копия + непрерывное архивирование.
+              \item Включить для СУБД режим архивирования WAL;
+              \item настроить копирование WAL (scp) на резервный узел;
+              \item создать первоначальную резервную копию (pg\_basebackup),
+              \item скопировать на резервный узел (rsync).
+          \end{enumerate}
     \item Подсчитать, каков будет объем резервных копий спустя месяц работы системы, исходя из следующих условий:
-    \begin{enumerate}
-        \item Средний объем новых данных в БД за сутки: 650МБ.
-        \item Средний объем измененных данных за сутки: 950МБ.
-    \end{enumerate}
+          \begin{enumerate}
+              \item Средний объем новых данных в БД за сутки: 650МБ.
+              \item Средний объем измененных данных за сутки: 950МБ.
+          \end{enumerate}
     \item Проанализировать результаты.
 \end{enumerate}
 
-\subsection{Решение}
+\subsection{Подготовка секретов}
 
-TODO
+Нам необходимо будет отправлять базовую резервную копию, а так WAL файлы на резервный узел, так что сперва следует сгенерировать и распределить ключи шифрования для безопасной передачи данных между узлами.
+
+\lstinputlisting[
+    language=bash,
+    caption={Генерация ключей}
+]{../db/common/0-ssh-keygen.sh}
+
+Далее я авторизовал публичный ключ primary узла на standby. Теперь можно проверить, что передача данных скорее всего будет работать.
+
+\lstinputlisting[
+    language=bash,
+    caption={Проверка подключения}
+]{../db/common/0-ssh-test.sh}
+
+\subsection{Конфигурация primary узла для резервного копирования}
+
+Включаем архивирование, будем отправлять WAL файлы на standby каждые 16 секунд.
+
+\begin{lstlisting}[
+    language=bash, 
+    caption={Ключевые строчки в конфигурационном файле}
+]
+## Archiving
+
+archive_mode    = on
+archive_timeout = 16s
+archive_command = 'ssh -q <STANDBY_HOST> "test ! -e <STANDBY_WAL_DIR>/%f" && scp %p <STANDBY_HOST>:~/<STANDBY_WAL_DIR>'
+\end{lstlisting}
+
+\subsection{Создание базовой резервной копии}
+
+\lstinputlisting[
+    language=bash,
+    caption={Создание базовой резервной копии}
+]{../db/primary/4-backup.sh}
+
+\subsection{Подготовка standby}
+
+\lstinputlisting[
+    language=bash,
+    caption={Подготовка standby}
+]{../db/standby/1-prepare.sh}
+
+\subsection{Полная настройка primary узла}
+
+\lstinputlisting[
+    language=bash,
+    caption={Полная настройка primary узла}
+]{../db/primary/9-full.sh}
+
+\subsection{Действия системного администратора по первоначальной настройке системы}
+
+\begin{enumerate}
+    \item Получить конфигурационные файлы системы из репозитория \\
+    \url{https://github.com/vityaman-edu/ddb-homework/tree/trunk/lab-3}
+
+    \item Доставить директории \texttt{db/common} и \texttt{db/primary} на \texttt{primary} узел, разместив их в домашней директории пользователя, от лица которого будет запущена система
+    
+    \item Доставить директории \texttt{db/common} и \texttt{db/standby} на \texttt{standby} узел, разместив их в домашней директории пользователя, от лица которого будет запущена система
+    
+    \item На \texttt{primary} узле сгенерировать ключи для \texttt{primary} узла при помощи скрипта \\ \texttt{common/0-ssh-keygen.sh} и авторизовать публичный ключ на узле standby 
+    
+    \item Проверить на \texttt{primary} узле возможность ssh соединения с \texttt{standby} узлом при помощи \\ \texttt{common/0-ssh-test.sh}
+    
+    \item Подготовить \texttt{standby} узел к резервированию, выполнив на нем \texttt{source common/0-env.sh \&\& sh standby/1-prepare.sh}
+    
+    \item Запустить \texttt{primary} узел, выполнив на нем \\
+    \texttt{
+        source common/0-env.sh \&\& 
+        sh common/0-pgpass.sh \&\& 
+        sh primary/9-full.sh}
+
+    \item Создать базовую резервную копию на \texttt{primary} узле и отправить ее на \texttt{standby} узел: \texttt{sh primary/4-backup.sh}
+    
+    \item Наполнить данными базу данных на \texttt{primary} узле:
+    \texttt{sh primary/5-fill.sh}
+
+    \item Убедиться, что базовая резервная копия и WAL файлы доставлены на \texttt{standby} узел
+
+\end{enumerate}
 
 \section{Этап 2. Потеря основного узла}
 
@@ -126,16 +256,24 @@ TODO
 
 Этот сценарий подразумевает полную недоступность основного узла. Необходимо восстановить работу СУБД на РЕЗЕРВНОМ узле, продемонстрировать успешный запуск СУБД и доступность данных.
 
-\subsection{Решение}
+\subsection{Восстановление СУБД на резервном узле}
 
-TODO
+Для этого необходимо просто выполнить 
+\texttt{source common/0-env.sh \&\& sh standby/2-restore.sh} 
+на \texttt{standby} узле, предварительно убедившись, что в 
+директории \texttt{primary/backup/base} находятся файлы базовой резервной копии,
+а в директории \texttt{primary/backup/wal} есть WAL сегменты.
+
+\lstinputlisting[
+    language=bash,
+    caption={Восстановление СУБД на резервном узле}
+]{../db/standby/2-restore.sh}
 
 \section{Этап 3. Повреждение файлов БД}
 
 \subsection{Задача}
 
 Этот сценарий подразумевает потерю данных (например, в результате сбоя диска или файловой системы) при сохранении доступности основного узла. Необходимо выполнить полное восстановление данных из резервной копии и перезапустить СУБД на ОСНОВНОМ узле.
-
 
 Ход работы:
 
@@ -177,9 +315,9 @@ TODO
 Данная лабораторная работа помогла мне изучить конфигурацию PostgreSQL.
 
 \begin{thebibliography}{99}
-    \bibitem{PSQLSC} 
-        PostgreSQL Documentation: сайт. - 2024. 
-        - URL: \url{https://www.postgresql.org/docs/14/index.html} (дата обращения: 06.04.2024) - Текст : электронный.
+    \bibitem{PSQLSC}
+    PostgreSQL Documentation: сайт. - 2024.
+    - URL: \url{https://www.postgresql.org/docs/14/index.html} (дата обращения: 06.04.2024) - Текст : электронный.
 \end{thebibliography}
 
 \end{document}
