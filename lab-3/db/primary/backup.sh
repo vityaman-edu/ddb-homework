@@ -12,4 +12,6 @@ echo "[primary] Creating base backup..."
     --no-password
 
 echo "[primary] Sending to '$DDB_STANDBY_HOST'..."
-rsync -ave ssh "$HOME/$DDB_BACKUP_BASE_DIR" $DDB_STANDBY_HOST:~/$DDB_BACKUP_DIR
+rsync -ave ssh \
+    "$HOME/$DDB_BACKUP_BASE_DIR" \
+    $DDB_STANDBY_USER@$DDB_STANDBY_HOST:~/$DDB_BACKUP_DIR

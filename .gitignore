@@ -5,3 +5,5 @@
 *.out
 *.toc
 *.synctex.gz
+
+lab-3/remote/env-remote.sh
