@@ -15,9 +15,12 @@ export DDB_NEW_USER_PASSWORD=rootik
 
 export PGDATA="$HOME/kop67"
 
-export DDB_INITDB=/usr/lib/postgresql/14/bin/initdb
-export DDB_PGBIN=/usr/lib/postgresql/14/bin/postgres
-export DDB_PGBASEBACKUP=/usr/lib/postgresql/14/bin/pg_basebackup
+export DDB_PG_BIN_DIR=/usr/lib/postgresql/14/bin
+export DDB_INITDB=$DDB_PG_BIN_DIR/initdb
+export DDB_PGBIN=$DDB_PG_BIN_DIR/postgres
+export DDB_PGBASEBACKUP=$DDB_PG_BIN_DIR/pg_basebackup
+export DDB_PGCTL=$DDB_PG_BIN_DIR/pg_ctl
+export DDB_PGVERIFYBACKUP=$DDB_PG_BIN_DIR/pg_verifybackup
 
 export DDB_BACKUP_DIR="primary/backup"
 export DDB_BACKUP_BASE_DIR="$DDB_BACKUP_DIR/base"

@@ -266,8 +266,8 @@ archive_command = 'ssh -q <STANDBY_HOST> "test ! -e <STANDBY_WAL_DIR>/%f" && scp
 
 \lstinputlisting[
     language=bash,
-    caption={Восстановление СУБД на резервном узле}
-]{../db/standby/2-restore.sh}
+    caption={Восстановление СУБД}
+]{../db/common/1-restore.sh}
 
 \subsection{Действия на primary узле}
 
@@ -376,7 +376,122 @@ lazyorangehair=# select * from note_new;
 
 \subsection{Решение}
 
-TODO
+Попробуем удалить таблицу \texttt{note\_prv}. Для этого узнаем, где представлены ее данные в файловой системе. 
+
+\begin{lstlisting}[
+    language=bash,
+    caption={Получаем физическую локацию таблицы}
+]
+$ psql -h localhost -p "$DDB_PG_PORT" "$DDB_PG_DATABASE"
+postgres=# SELECT pg_relation_filepath('note_prv');
+ pg_relation_filepath 
+----------------------
+ base/14374/16389
+(1 row)
+\end{lstlisting}
+
+Начинаем уничтожение.
+
+\begin{lstlisting}[
+    language=bash,
+    caption={Удаляем файл таблицы}
+]
+$ rm $PGDATA/base/14374/16389
+
+\end{lstlisting}
+
+Наблюдаем эффекты.
+
+\begin{lstlisting}[
+    language=bash,
+    caption={Проверяем работоспобность СУБД}
+]
+$ psql -h localhost -p "$DDB_PG_PORT" "$DDB_PG_DATABASE"
+postgres=# select * from note_prv;
+ERROR:  could not open file "base/14374/16389": No such file or directory
+\end{lstlisting}
+
+Попробуем перезапустить базу данных.
+
+\begin{lstlisting}[
+    language=bash,
+    caption={Перезапускаем датабазу}
+]
+$ sh common/4-stop.sh
+waiting for server to shut down.... done
+server stopped
+
+$ sh common/2-start.sh
+2024-05-28 10:52:21.905 GMT [9200] LOG:  starting PostgreSQL 14.12 (Ubuntu 14.12-1.pgdg20.04+1) on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 9.4.0-1ubuntu1~20.04.2) 9.4.0, 64-bit
+2024-05-28 10:52:21.905 GMT [9200] LOG:  listening on IPv4 address "127.0.0.1", port 9666
+2024-05-28 10:52:21.908 GMT [9206] LOG:  database system was shut down at 2024-05-28 10:52:16 GMT
+2024-05-28 10:52:21.916 GMT [9200] LOG:  database system is ready to accept connections
+
+$ psql -h localhost -p "$DDB_PG_PORT" "$DDB_PG_DATABASE"
+postgres=# select * from note_prv;
+2024-05-28 10:54:18.117 GMT [9230] ERROR:  could not open file "base/14374/16389": No such file or directory
+2024-05-28 10:54:18.117 GMT [9230] STATEMENT:  select * from note_prv;
+ERROR:  could not open file "base/14374/16389": No such file or directory
+\end{lstlisting}
+
+Видим, что postgres не заметил пропажи, значит не проверил целостность файлов. Наверное, должен существовать способ осуществить проверку целостность его файлов. \texttt{pg\_checksums} не обнаружил проблему. По идее, можно использовать для проверки утилиту \texttt{pg\_verifybackup}, которая проверит, соответствует ли содержимое \texttt{PGDATA} заданному бэкапу.
+
+Скачиваем бэкап с \texttt{standby}, сносим нашу больную датабазу, запускаем восстановление и проверяем результат.
+
+\begin{lstlisting}[
+    language=bash,
+    caption={Восстанавливаем базу данных}
+]
+$ sh primary/6-download.sh 
+
+$ ls primary/backup/base primary/backup/wal/
+primary/backup/base:
+16384.tar  backup_manifest  base.tar
+
+primary/backup/wal/:
+000000010000000000000001
+000000010000000000000002
+000000010000000000000002.00000028.backup
+000000010000000000000003
+000000010000000000000004
+000000010000000000000005
+$ sh common/3-clear.sh 
+
+$ sh common/1-restore.sh 
+
+$ sh common/2-start.sh 
+2024-05-28 11:36:31.487 GMT [13049] LOG:  starting PostgreSQL 14.12 (Ubuntu 14.12-1.pgdg20.04+1) on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 9.4.0-1ubuntu1~20.04.2) 9.4.0, 64-bit
+2024-05-28 11:36:31.487 GMT [13049] LOG:  listening on IPv4 address "127.0.0.1", port 9666
+2024-05-28 11:36:31.489 GMT [13051] LOG:  database system was interrupted; last known up at 2024-05-28 08:50:55 GMT
+cp: cannot stat '/home/postgres0/primary/backup/wal/00000002.history': No such file or directory
+2024-05-28 11:36:31.492 GMT [13051] LOG:  starting archive recovery
+2024-05-28 11:36:31.502 GMT [13051] LOG:  restored log file "000000010000000000000002" from archive
+2024-05-28 11:36:31.506 GMT [13051] LOG:  redo starts at 0/2000028
+2024-05-28 11:36:31.506 GMT [13051] LOG:  consistent recovery state reached at 0/2000138
+2024-05-28 11:36:31.507 GMT [13049] LOG:  database system is ready to accept read-only connections
+2024-05-28 11:36:31.516 GMT [13051] LOG:  restored log file "000000010000000000000003" from archive
+2024-05-28 11:36:31.527 GMT [13051] LOG:  restored log file "000000010000000000000004" from archive
+2024-05-28 11:36:31.539 GMT [13051] LOG:  restored log file "000000010000000000000005" from archive
+cp: cannot stat '/home/postgres0/primary/backup/wal/000000010000000000000006': No such file or directory
+2024-05-28 11:36:31.541 GMT [13051] LOG:  redo done at 0/50001C0 system usage: CPU: user: 0.00 s, system: 0.00 s, elapsed: 0.03 s
+2024-05-28 11:36:31.541 GMT [13051] LOG:  last completed transaction was at log time 2024-05-28 08:51:07.961265+00
+2024-05-28 11:36:31.552 GMT [13051] LOG:  restored log file "000000010000000000000005" from archive
+cp: cannot stat '/home/postgres0/primary/backup/wal/00000002.history': No such file or directory
+2024-05-28 11:36:31.557 GMT [13051] LOG:  selected new timeline ID: 2
+2024-05-28 11:36:31.563 GMT [13051] LOG:  archive recovery complete
+cp: cannot stat '/home/postgres0/primary/backup/wal/00000001.history': No such file or directory
+2024-05-28 11:36:31.573 GMT [13049] LOG:  database system is ready to accept connections
+
+$ psql -h localhost -p "$DDB_PG_PORT" "$DDB_PG_DATABASE"
+postgres=# select * from note_prv;
+ id |         content          
+----+--------------------------
+  1 | Note at postgres
+  2 | Another note at postgres
+(2 rows)
+\end{lstlisting}
+
+Починили.
 
 \section{Этап 4. Логическое повреждение данных}
 
