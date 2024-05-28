@@ -7,6 +7,7 @@ dump() {
     pg_dump \
         --host=localhost \
         --port=$DDB_PG_PORT \
+        --username=$DDB_PG_USER \
         --format=tar \
         --clean \
         --if-exists \

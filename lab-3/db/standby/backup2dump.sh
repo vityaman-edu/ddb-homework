@@ -11,7 +11,7 @@ fi
 echo "[backup2dump] Starting converting backup to sql dump..."
 
 echo "[backup2dump] Starting restoration..."
-sh common/restore.sh standby "$TARGET_TIME"
+sh common/restore.sh standby anon-tblspc "$TARGET_TIME"
 
 echo "[backup2dump] Starting the database..."
 sh common/start.sh &

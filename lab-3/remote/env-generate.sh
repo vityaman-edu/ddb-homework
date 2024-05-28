@@ -2,7 +2,7 @@
 
 set -e
 
-FILE=./remote/env-remote.sh
+FILE=./remote/env.sh
 echo "export DDB_INITDB=initdb"                     >> $FILE
 echo "export DDB_PGBIN=postgres"                    >> $FILE
 echo "export DDB_PGBASEBACKUP=pg_basebackup"        >> $FILE
