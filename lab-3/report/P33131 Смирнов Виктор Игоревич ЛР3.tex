@@ -130,21 +130,21 @@
 \lstinputlisting[
     language=bash,
     caption={Инициализация базы данных}
-]{../db/primary/1-init.sh}
+]{../db/primary/init.sh}
 
 \subsection{Запуск базы данных}
 
 \lstinputlisting[
     language=bash,
     caption={Запуск базы данных}
-]{../db/common/2-start.sh}
+]{../db/common/start.sh}
 
 \subsection{Настройка базы данных}
 
 \lstinputlisting[
     language=bash,
     caption={Настройка базы данных}
-]{../db/primary/3-setup.sh}
+]{../db/primary/setup.sh}
 
 \section{Этап 1. Резервное копирование}
 
@@ -203,21 +203,21 @@ archive_command = 'ssh -q <STANDBY_HOST> "test ! -e <STANDBY_WAL_DIR>/%f" && scp
 \lstinputlisting[
     language=bash,
     caption={Создание базовой резервной копии}
-]{../db/primary/4-backup.sh}
+]{../db/primary/backup.sh}
 
 \subsection{Подготовка standby}
 
 \lstinputlisting[
     language=bash,
     caption={Подготовка standby}
-]{../db/standby/1-prepare.sh}
+]{../db/standby/prepare.sh}
 
 \subsection{Полная настройка primary узла}
 
 \lstinputlisting[
     language=bash,
     caption={Полная настройка primary узла}
-]{../db/primary/9-full.sh}
+]{../db/primary/full.sh}
 
 \subsection{Действия системного администратора по первоначальной настройке системы}
 
@@ -233,18 +233,18 @@ archive_command = 'ssh -q <STANDBY_HOST> "test ! -e <STANDBY_WAL_DIR>/%f" && scp
     
     \item Проверить на \texttt{primary} узле возможность ssh соединения с \texttt{standby} узлом при помощи \\ \texttt{common/0-ssh-test.sh}
     
-    \item Подготовить \texttt{standby} узел к резервированию, выполнив на нем \texttt{source common/0-env.sh \&\& sh standby/1-prepare.sh}
+    \item Подготовить \texttt{standby} узел к резервированию, выполнив на нем \texttt{source common/0-env.sh \&\& sh standby/prepare.sh}
     
     \item Запустить \texttt{primary} узел, выполнив на нем \\
     \texttt{
         source common/0-env.sh \&\& 
         sh common/0-pgpass.sh \&\& 
-        sh primary/9-full.sh}
+        sh primary/full.sh}
 
-    \item Создать базовую резервную копию на \texttt{primary} узле и отправить ее на \texttt{standby} узел: \texttt{sh primary/4-backup.sh}
+    \item Создать базовую резервную копию на \texttt{primary} узле и отправить ее на \texttt{standby} узел: \texttt{sh primary/backup.sh}
     
     \item Наполнить данными базу данных на \texttt{primary} узле:
-    \texttt{sh primary/5-fill.sh}
+    \texttt{sh primary/fill.sh}
 
     \item Убедиться, что базовая резервная копия и WAL файлы доставлены на \texttt{standby} узел
 
@@ -259,7 +259,7 @@ archive_command = 'ssh -q <STANDBY_HOST> "test ! -e <STANDBY_WAL_DIR>/%f" && scp
 \subsection{Восстановление СУБД на резервном узле}
 
 Для этого необходимо просто выполнить 
-\texttt{source common/0-env.sh \&\& sh standby/2-restore.sh} 
+\texttt{source common/0-env.sh \&\& sh standby/restore.sh} 
 на \texttt{standby} узле, предварительно убедившись, что в 
 директории \texttt{primary/backup/base} находятся файлы базовой резервной копии,
 а в директории \texttt{primary/backup/wal} есть WAL сегменты.
@@ -267,7 +267,7 @@ archive_command = 'ssh -q <STANDBY_HOST> "test ! -e <STANDBY_WAL_DIR>/%f" && scp
 \lstinputlisting[
     language=bash,
     caption={Восстановление СУБД}
-]{../db/common/1-restore.sh}
+]{../db/common/restore.sh}
 
 \subsection{Действия на primary узле}
 
@@ -281,9 +281,9 @@ postgres0@2d09031f584d:~$ history
 3  sh common/0-ssh-keygen.sh 
 4  sh common/0-ssh-test.sh ddb-standby
 5  sh common/0-pgpass.sh 
-6  sh primary/9-full.sh 
-7  sh primary/4-backup.sh 
-8  sh primary/5-fill.sh 
+6  sh primary/full.sh 
+7  sh primary/backup.sh 
+8  sh primary/fill.sh 
 9  history
 \end{lstlisting}
 
@@ -297,14 +297,14 @@ postgres0@c33884c20d42:~$ history
 2  ls
 3  source common/0-env.sh
 4  vim .ssh/authorized_keys 
-5  sh standby/1-prepare.sh 
+5  sh standby/prepare.sh 
 6  ls
 7  ls primary/backup/base/
 8  ls primary/backup/wal/
 9  ls primary/backup/base
 10  ls primary/backup/wal/
-11  sh standby/2-restore.sh 
-12  sh common/2-start.sh 
+11  sh standby/restore.sh 
+12  sh common/start.sh 
 13  bg
 14  history
 \end{lstlisting}
@@ -313,7 +313,7 @@ postgres0@c33884c20d42:~$ history
     language=bash,
     caption={Вывод postgres при старте}
 ]
-postgres0@c33884c20d42:~$ sh common/2-start.sh 
+postgres0@c33884c20d42:~$ sh common/start.sh 
 2024-05-28 08:56:18.375 GMT [1088] LOG:  starting PostgreSQL 14.12 (Ubuntu 14.12-1.pgdg20.04+1) on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 9.4.0-1ubuntu1~20.04.2) 9.4.0, 64-bit
 2024-05-28 08:56:18.375 GMT [1088] LOG:  listening on IPv4 address "127.0.0.1", port 9666
 2024-05-28 08:56:18.378 GMT [1089] LOG:  database system was interrupted; last known up at 2024-05-28 08:50:55 GMT
@@ -417,11 +417,11 @@ ERROR:  could not open file "base/14374/16389": No such file or directory
     language=bash,
     caption={Перезапускаем датабазу}
 ]
-$ sh common/4-stop.sh
+$ sh common/stop.sh
 waiting for server to shut down.... done
 server stopped
 
-$ sh common/2-start.sh
+$ sh common/start.sh
 2024-05-28 10:52:21.905 GMT [9200] LOG:  starting PostgreSQL 14.12 (Ubuntu 14.12-1.pgdg20.04+1) on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 9.4.0-1ubuntu1~20.04.2) 9.4.0, 64-bit
 2024-05-28 10:52:21.905 GMT [9200] LOG:  listening on IPv4 address "127.0.0.1", port 9666
 2024-05-28 10:52:21.908 GMT [9206] LOG:  database system was shut down at 2024-05-28 10:52:16 GMT
@@ -442,7 +442,7 @@ ERROR:  could not open file "base/14374/16389": No such file or directory
     language=bash,
     caption={Восстанавливаем базу данных}
 ]
-$ sh primary/6-download.sh 
+$ sh primary/download.sh 
 
 $ ls primary/backup/base primary/backup/wal/
 primary/backup/base:
@@ -455,11 +455,11 @@ primary/backup/wal/:
 000000010000000000000003
 000000010000000000000004
 000000010000000000000005
-$ sh common/3-clear.sh 
+$ sh common/clear.sh 
 
-$ sh common/1-restore.sh 
+$ sh common/restore.sh 
 
-$ sh common/2-start.sh 
+$ sh common/start.sh 
 2024-05-28 11:36:31.487 GMT [13049] LOG:  starting PostgreSQL 14.12 (Ubuntu 14.12-1.pgdg20.04+1) on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 9.4.0-1ubuntu1~20.04.2) 9.4.0, 64-bit
 2024-05-28 11:36:31.487 GMT [13049] LOG:  listening on IPv4 address "127.0.0.1", port 9666
 2024-05-28 11:36:31.489 GMT [13051] LOG:  database system was interrupted; last known up at 2024-05-28 08:50:55 GMT
@@ -493,7 +493,7 @@ postgres=# select * from note_prv;
 
 Починили.
 
-Вторая часть выполняется аналогично, но нужно вызывать восстановление через \texttt{sh common/1-restore.bash anon-tblspc}.
+Вторая часть выполняется аналогично, но нужно вызывать восстановление через \texttt{sh common/restore.bash anon-tblspc}.
 
 \section{Этап 4. Логическое повреждение данных}
 
@@ -520,7 +520,7 @@ postgres=# select * from note_prv;
 \lstinputlisting[
     language=bash,
     caption={Вставка дополнительных строк}
-]{../db/primary/7-fill-extra.sh}
+]{../db/primary/fill-extra.sh}
 
 \subsection{Восстановление дампа из бэкапа на резервном узле}
 

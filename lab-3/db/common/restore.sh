@@ -9,7 +9,7 @@ TARGET_TIME=$2
 echo "[restore] TARGET_TIME: $TARGET_TIME"
 
 echo "[restore] Removing existing database installation..."
-sh common/3-clear.sh
+sh common/clear.sh
 
 mkdir -p $PGDATA
 chmod 0700 $PGDATA

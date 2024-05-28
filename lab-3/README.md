@@ -12,5 +12,5 @@ At `localhost`:
 At `primary`:
 
 ```bash
-source ./primary/9-full.sh
+source ./primary/full.sh
 ```
