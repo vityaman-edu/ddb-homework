@@ -1,9 +1,15 @@
 #!/bin/sh
 
-set -e
+# set -e
 
 MODE=$1
 echo "[restore] MODE: $MODE"
+
+TARGET_TIME=$2
+echo "[restore] TARGET_TIME: $TARGET_TIME"
+
+echo "[restore] Removing existing database installation..."
+sh common/3-clear.sh
 
 mkdir -p $PGDATA
 chmod 0700 $PGDATA
@@ -50,11 +56,17 @@ rm $PGDATA/tablespace_map
 # Patching is used as we need to change values depending on env variables
 echo "[restore] Patching postgresql.conf: add 'restore_command'..."
 RESTORE_CMD="restore_command = 'cp ~/$DDB_BACKUP_WAL_DIR/%f %p'"
-echo "\n$RESTORE_CMD\n" >>$PGDATA/postgresql.conf
+echo "\n$RESTORE_CMD\n" >> $PGDATA/postgresql.conf
 
 if [ "$MODE" = "standby" ]; then
     echo "[restore] Patching postgresql.conf: disable archive..."
     sed -i -e "s+archive_mode+#archive_mode+g" $PGDATA/postgresql.conf
+fi
+
+if [ "$TARGET_TIME" != "" ]; then
+    echo "[restore] Patching postgresql.conf: setting target time..."
+    echo "\nrecovery_target_time = '$TARGET_TIME'\n" >> $PGDATA/postgresql.conf
+    echo "\nrecovery_target_inclusive = false\n"     >> $PGDATA/postgresql.conf
 fi
 
 echo "[restore] Signalling of recovery..."

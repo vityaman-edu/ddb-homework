@@ -513,9 +513,16 @@ postgres=# select * from note_prv;
     \item Продемонстрировать и проанализировать результат.
 \end{enumerate}
 
-\subsection{Решение}
+\subsection{Фиксируем состояние БД}
 
-TODO
+Сперва запустим вставку нескольких строк на основном узле через скрипт, после чего фиксируем текущее время.
+
+\lstinputlisting[
+    language=bash,
+    caption={Вставка дополнительных строк}
+]{../db/primary/7-fill-extra.sh}
+
+\subsection{Восстановление дампа из бэкапа на резервном узле}
 
 \section{Вывод}
 

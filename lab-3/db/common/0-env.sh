@@ -21,9 +21,12 @@ export DDB_PGBIN=$DDB_PG_BIN_DIR/postgres
 export DDB_PGBASEBACKUP=$DDB_PG_BIN_DIR/pg_basebackup
 export DDB_PGCTL=$DDB_PG_BIN_DIR/pg_ctl
 export DDB_PGVERIFYBACKUP=$DDB_PG_BIN_DIR/pg_verifybackup
+export DDB_PGDUMP=$DDB_PG_BIN_DIR/pg_dump
+export DDB_PGRESTORE=$DDB_PG_BIN_DIR/pg_restore
 
 export DDB_BACKUP_DIR="primary/backup"
 export DDB_BACKUP_BASE_DIR="$DDB_BACKUP_DIR/base"
 export DDB_BACKUP_WAL_DIR="$DDB_BACKUP_DIR/wal"
+export DDB_BACKUP_DUMP_DIR="$DDB_BACKUP_DIR/dump"
 
 export DDB_STANDBY_HOST=ddb-standby
