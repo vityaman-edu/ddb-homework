@@ -104,7 +104,7 @@
 \lstinputlisting[
     language=bash,
     caption={Переменные окружения}
-]{../db/common/0-env.sh}
+]{../db/common/env.sh}
 
 \subsection{Конфигурация базы данных}
 
@@ -123,7 +123,7 @@
 \lstinputlisting[
     language=bash,
     caption={Файл .pgpass}
-]{../db/common/0-pgpass.sh}
+]{../db/common/pgpass.sh}
 
 \subsection{Инициализация базы данных}
 
@@ -174,14 +174,14 @@
 \lstinputlisting[
     language=bash,
     caption={Генерация ключей}
-]{../db/common/0-ssh-keygen.sh}
+]{../db/common/ssh-keygen.sh}
 
 Далее я авторизовал публичный ключ primary узла на standby. Теперь можно проверить, что передача данных скорее всего будет работать.
 
 \lstinputlisting[
     language=bash,
     caption={Проверка подключения}
-]{../db/common/0-ssh-test.sh}
+]{../db/common/ssh-test.sh}
 
 \subsection{Конфигурация primary узла для резервного копирования}
 
@@ -229,16 +229,16 @@ archive_command = 'ssh -q <STANDBY_HOST> "test ! -e <STANDBY_WAL_DIR>/%f" && scp
     
     \item Доставить директории \texttt{db/common} и \texttt{db/standby} на \texttt{standby} узел, разместив их в домашней директории пользователя, от лица которого будет запущена система
     
-    \item На \texttt{primary} узле сгенерировать ключи для \texttt{primary} узла при помощи скрипта \\ \texttt{common/0-ssh-keygen.sh} и авторизовать публичный ключ на узле standby 
+    \item На \texttt{primary} узле сгенерировать ключи для \texttt{primary} узла при помощи скрипта \\ \texttt{common/ssh-keygen.sh} и авторизовать публичный ключ на узле standby 
     
-    \item Проверить на \texttt{primary} узле возможность ssh соединения с \texttt{standby} узлом при помощи \\ \texttt{common/0-ssh-test.sh}
+    \item Проверить на \texttt{primary} узле возможность ssh соединения с \texttt{standby} узлом при помощи \\ \texttt{common/ssh-test.sh}
     
-    \item Подготовить \texttt{standby} узел к резервированию, выполнив на нем \texttt{source common/0-env.sh \&\& sh standby/prepare.sh}
+    \item Подготовить \texttt{standby} узел к резервированию, выполнив на нем \texttt{source common/env.sh \&\& sh standby/prepare.sh}
     
     \item Запустить \texttt{primary} узел, выполнив на нем \\
     \texttt{
-        source common/0-env.sh \&\& 
-        sh common/0-pgpass.sh \&\& 
+        source common/env.sh \&\& 
+        sh common/pgpass.sh \&\& 
         sh primary/full.sh}
 
     \item Создать базовую резервную копию на \texttt{primary} узле и отправить ее на \texttt{standby} узел: \texttt{sh primary/backup.sh}
@@ -259,7 +259,7 @@ archive_command = 'ssh -q <STANDBY_HOST> "test ! -e <STANDBY_WAL_DIR>/%f" && scp
 \subsection{Восстановление СУБД на резервном узле}
 
 Для этого необходимо просто выполнить 
-\texttt{source common/0-env.sh \&\& sh standby/restore.sh} 
+\texttt{source common/env.sh \&\& sh standby/restore.sh} 
 на \texttt{standby} узле, предварительно убедившись, что в 
 директории \texttt{primary/backup/base} находятся файлы базовой резервной копии,
 а в директории \texttt{primary/backup/wal} есть WAL сегменты.
@@ -277,10 +277,10 @@ archive_command = 'ssh -q <STANDBY_HOST> "test ! -e <STANDBY_WAL_DIR>/%f" && scp
 ]
 postgres0@2d09031f584d:~$ history
 1  ls
-2  source common/0-env.sh 
-3  sh common/0-ssh-keygen.sh 
-4  sh common/0-ssh-test.sh ddb-standby
-5  sh common/0-pgpass.sh 
+2  source common/env.sh 
+3  sh common/ssh-keygen.sh 
+4  sh common/ssh-test.sh ddb-standby
+5  sh common/pgpass.sh 
 6  sh primary/full.sh 
 7  sh primary/backup.sh 
 8  sh primary/fill.sh 
@@ -295,7 +295,7 @@ postgres0@2d09031f584d:~$ history
 ]
 postgres0@c33884c20d42:~$ history
 2  ls
-3  source common/0-env.sh
+3  source common/env.sh
 4  vim .ssh/authorized_keys 
 5  sh standby/prepare.sh 
 6  ls

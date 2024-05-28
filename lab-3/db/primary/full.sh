@@ -3,7 +3,7 @@
 set -e
 
 echo "[primary] Creating '.pgpass' file..."
-sh common/0-pgpass.sh
+sh common/pgpass.sh
 
 echo "[primary] Editing 'postgresql.conf' file..."
 sh primary/config.sh
