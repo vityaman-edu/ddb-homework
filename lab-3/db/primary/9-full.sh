@@ -12,7 +12,7 @@ echo "[primary] Initializing the database..."
 sh primary/1-init.sh
 
 echo "[primary] Starting the database..."
-sh primary/2-start.sh & 
+sh common/2-start.sh & 
 
 echo "[primary] Waiting the database startup..."
 sleep 2
