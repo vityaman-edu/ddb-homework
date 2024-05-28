@@ -269,6 +269,96 @@ archive_command = 'ssh -q <STANDBY_HOST> "test ! -e <STANDBY_WAL_DIR>/%f" && scp
     caption={Восстановление СУБД на резервном узле}
 ]{../db/standby/2-restore.sh}
 
+\subsection{Действия на primary узле}
+
+\begin{lstlisting}[
+    language=bash,
+    caption={Действия на primary узле}
+]
+postgres0@2d09031f584d:~$ history
+1  ls
+2  source common/0-env.sh 
+3  sh common/0-ssh-keygen.sh 
+4  sh common/0-ssh-test.sh ddb-standby
+5  sh common/0-pgpass.sh 
+6  sh primary/9-full.sh 
+7  sh primary/4-backup.sh 
+8  sh primary/5-fill.sh 
+9  history
+\end{lstlisting}
+
+\subsection{Действия на standby узле}
+
+\begin{lstlisting}[
+    language=bash,
+    caption={Действия на standby узле}
+]
+postgres0@c33884c20d42:~$ history
+2  ls
+3  source common/0-env.sh
+4  vim .ssh/authorized_keys 
+5  sh standby/1-prepare.sh 
+6  ls
+7  ls primary/backup/base/
+8  ls primary/backup/wal/
+9  ls primary/backup/base
+10  ls primary/backup/wal/
+11  sh standby/2-restore.sh 
+12  sh common/2-start.sh 
+13  bg
+14  history
+\end{lstlisting}
+
+\begin{lstlisting}[
+    language=bash,
+    caption={Вывод postgres при старте}
+]
+postgres0@c33884c20d42:~$ sh common/2-start.sh 
+2024-05-28 08:56:18.375 GMT [1088] LOG:  starting PostgreSQL 14.12 (Ubuntu 14.12-1.pgdg20.04+1) on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 9.4.0-1ubuntu1~20.04.2) 9.4.0, 64-bit
+2024-05-28 08:56:18.375 GMT [1088] LOG:  listening on IPv4 address "127.0.0.1", port 9666
+2024-05-28 08:56:18.378 GMT [1089] LOG:  database system was interrupted; last known up at 2024-05-28 08:50:55 GMT
+cp: cannot stat '/home/postgres0/primary/backup/wal/00000002.history': No such file or directory
+2024-05-28 08:56:18.381 GMT [1089] LOG:  starting archive recovery
+2024-05-28 08:56:18.392 GMT [1089] LOG:  restored log file "000000010000000000000002" from archive
+2024-05-28 08:56:18.396 GMT [1089] LOG:  redo starts at 0/2000028
+2024-05-28 08:56:18.396 GMT [1089] LOG:  consistent recovery state reached at 0/2000138
+2024-05-28 08:56:18.397 GMT [1088] LOG:  database system is ready to accept read-only connections
+2024-05-28 08:56:18.406 GMT [1089] LOG:  restored log file "000000010000000000000003" from archive
+2024-05-28 08:56:18.417 GMT [1089] LOG:  restored log file "000000010000000000000004" from archive
+cp: cannot stat '/home/postgres0/primary/backup/wal/000000010000000000000005': No such file or directory
+2024-05-28 08:56:18.420 GMT [1089] LOG:  redo done at 0/4000148 system usage: CPU: user: 0.00 s, system: 0.00 s, elapsed: 0.02 s
+2024-05-28 08:56:18.420 GMT [1089] LOG:  last completed transaction was at log time 2024-05-28 08:51:07.961265+00
+2024-05-28 08:56:18.430 GMT [1089] LOG:  restored log file "000000010000000000000004" from archive
+cp: cannot stat '/home/postgres0/primary/backup/wal/00000002.history': No such file or directory
+2024-05-28 08:56:18.435 GMT [1089] LOG:  selected new timeline ID: 2
+2024-05-28 08:56:18.441 GMT [1089] LOG:  archive recovery complete
+cp: cannot stat '/home/postgres0/primary/backup/wal/00000001.history': No such file or directory
+2024-05-28 08:56:18.450 GMT [1088] LOG:  database system is ready to accept connections
+\end{lstlisting}
+
+\begin{lstlisting}[
+    language=bash,
+    caption={Состояние СУБД на standby узле}
+]
+$ psql -U "$DDB_PG_USER" -h localhost -p $DDB_PG_PORT -d postges 
+postgres=# select * from note_prv;
+ id |         content          
+----+--------------------------
+  1 | Note at postgres
+  2 | Another note at postgres
+(2 rows)
+
+$ psql -U "$DDB_PG_USER" -h localhost -p $DDB_PG_PORT -d lazyorangehair
+lazyorangehair=# select * from note_new;
+ id |            content             
+----+--------------------------------
+  1 | Note at lazyorangehair
+  2 | Another note at lazyorangehair
+(2 rows)
+\end{lstlisting}
+
+Как мы видим, в базе данных сохранились не только данные с базовой копии, но и подтянулись изменения из WAL сегментов.
+
 \section{Этап 3. Повреждение файлов БД}
 
 \subsection{Задача}
