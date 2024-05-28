@@ -8,32 +8,33 @@ chmod 0700 $PGDATA
 echo "[standby] Extracting base backup..."
 tar \
     --extract \
-    -f "$HOME/$DDB_PRIMARY_BACKUP_BASE_DIR/base.tar" \
+    -f "$HOME/$DDB_BACKUP_BASE_DIR/base.tar" \
     --directory=$PGDATA
 
 echo "[standby] Restoring tablespaces..."
 while read -r line; do
-    tablespace_oid=$(echo $line | awk '{print $1}')
-    echo "[standby][$tablespace_oid] Restoring tablespace..."
+    TABLESPACE_OID=$(echo $line | awk '{print $1}')
+    TABLESPACE_DIR=$(echo $line | awk '{print $2}')
+    echo "[standby][$TABLESPACE_OID] Restoring tablespace..."
 
-    TABLESPACE_DIR=$HOME/tablespace/$tablespace_oid
-    echo "[standby][$tablespace_oid] Directory: $TABLESPACE_DIR"
+    echo "[standby][$TABLESPACE_OID] Directory: $TABLESPACE_DIR"
     mkdir -p $TABLESPACE_DIR
 
-    echo "[standby][$tablespace_oid] Extracting..."
+    echo "[standby][$TABLESPACE_OID] Extracting..."
     tar --extract \
-        -f $HOME/$DDB_PRIMARY_BACKUP_BASE_DIR/$tablespace_oid.tar \
+        -f $HOME/$DDB_BACKUP_BASE_DIR/$TABLESPACE_OID.tar \
         --directory=$TABLESPACE_DIR
 
-    echo "[standby][$tablespace_oid] Creating symbolic link..."
-    ln -s $TABLESPACE_DIR $PGDATA/pg_tblspc/$tablespace_oid
+    echo "[standby][$TABLESPACE_OID] Creating symbolic link..."
+    ln -s $TABLESPACE_DIR $PGDATA/pg_tblspc/$TABLESPACE_OID
 done < $PGDATA/tablespace_map
 
 echo "[standby] Removing 'tablespace_map'..."
 rm $PGDATA/tablespace_map
 
+# Patching is used as we need to change values depending on env variables
 echo "[standby] Patching postgresql.conf: add 'restore_command'..."
-RESTORE_CMD="restore_command = 'cp $HOME/$DDB_STANDBY_BACKUP_WAL_DIR/%f %p'"
+RESTORE_CMD="restore_command = 'cp $HOME/$DDB_BACKUP_WAL_DIR/%f %p'"
 echo "\n$RESTORE_CMD\n" >> $PGDATA/postgresql.conf
 
 echo "[standby] Patching postgresql.conf: disable archive..."
