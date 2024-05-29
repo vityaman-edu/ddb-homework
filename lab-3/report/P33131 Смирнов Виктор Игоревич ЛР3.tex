@@ -257,7 +257,7 @@ archive_command = 'ssh -q <STANDBY_HOST> "test ! -e <STANDBY_WAL_DIR>/%f" && scp
     \item Средний объем измененных данных за сутки: M = 950МБ
 \end{enumerate}
 
-Базовая резервная копия у меня весит $B = 50 \; \texttt{MB}$. 
+Базовая резервная копия у меня весит $B = 50 \; \texttt{MB}$.
 
 Сперва оценим величину грубо:
 
@@ -277,7 +277,7 @@ $$B + (N + M) \cdot 30 = 46 \; \texttt{GB} $$
 \texttt{source common/env.sh \&\& sh common/restore.sh standby anon-tblspc}
 на \texttt{standby} узле, предварительно убедившись, что в
 директории \texttt{primary/backup/base} находятся файлы базовой резервной копии,
-а в директории \texttt{primary/backup/wal} есть WAL сегменты.
+а в директории \texttt{primary/backup/wal} есть WAL сегменты. Далее можно будет запустить СУБД на резервном узле с помощью \texttt{sh common/start.sh}.
 
 \lstinputlisting[
     language=bash,
@@ -290,7 +290,7 @@ $$B + (N + M) \cdot 30 = 46 \; \texttt{GB} $$
     language=bash,
     caption={Действия на primary узле}
 ]
-postgres0@2d09031f584d:~$ history
+$ history
 1  ls
 2  source common/env.sh 
 3  sh common/ssh-keygen.sh 
@@ -308,15 +308,12 @@ postgres0@2d09031f584d:~$ history
     language=bash,
     caption={Действия на standby узле}
 ]
-postgres0@c33884c20d42:~$ history
-2  ls
-3  source common/env.sh
-4  vim .ssh/authorized_keys 
-5  sh standby/prepare.sh 
-6  ls
-7  ls primary/backup/base/
-8  ls primary/backup/wal/
-9  ls primary/backup/base
+$ history
+3   source common/env.sh
+4   vim .ssh/authorized_keys 
+5   sh standby/prepare.sh 
+8   ls primary/backup/wal/
+9   ls primary/backup/base
 10  ls primary/backup/wal/
 11  sh standby/restore.sh 
 12  sh common/start.sh 
@@ -470,36 +467,36 @@ $ sh common/restore.sh
 \end{lstlisting}
 
 \texttt{
-\$ sh common/start.sh  \\
-2024-05-28 17:42:12.835 GMT [61895] СООБЩЕНИЕ:  запускается PostgreSQL 14.2 on amd64-portbld-freebsd13.0, compiled by FreeBSD clang version 11.0.1 (git@github.com:llvm/llvm-project.git llvmorg-11.0.1-0-g43ff75f2c3fe), 64-bit\\
-2024-05-28 17:42:12.835 GMT [61895] СООБЩЕНИЕ:  для приёма подключений по адресу IPv4 "127.0.0.1" открыт порт 9666\\
-2024-05-28 17:42:12.838 GMT [61896] СООБЩЕНИЕ:  работа системы БД была прервана; последний момент работы: 2024-05-28 17:19:51 GMT\\
-cp: /var/db/postgres0/primary/backup/wal/00000002.history: No such file or directory\\
-2024-05-28 17:42:12.840 GMT [61896] СООБЩЕНИЕ:  начинается восстановление архива\\
-2024-05-28 17:42:12.842 GMT [61896] СООБЩЕНИЕ:  файл журнала "000000010000000000000002" восстановлен из архива\\
-2024-05-28 17:42:12.843 GMT [61896] СООБЩЕНИЕ:  запись REDO начинается со смещения 0/2000028\\
-2024-05-28 17:42:12.843 GMT [61896] СООБЩЕНИЕ:  согласованное состояние восстановления достигнуто по смещению 0/2000138\\
-2024-05-28 17:42:12.844 GMT [61895] СООБЩЕНИЕ:  система БД готова принимать подключения в режиме "только чтение"\\
-2024-05-28 17:42:12.845 GMT [61896] СООБЩЕНИЕ:  файл журнала "000000010000000000000003" восстановлен из архива\\
-2024-05-28 17:42:12.852 GMT [61896] СООБЩЕНИЕ:  файл журнала "000000010000000000000004" восстановлен из архива\\
-2024-05-28 17:42:12.854 GMT [61896] СООБЩЕНИЕ:  файл журнала "000000010000000000000005" восстановлен из архива\\
-2024-05-28 17:42:12.856 GMT [61896] СООБЩЕНИЕ:  файл журнала "000000010000000000000006" восстановлен из архива\\
-cp: /var/db/postgres0/primary/backup/wal/000000010000000000000007: No such file or directory\\
-2024-05-28 17:42:12.858 GMT [61896] СООБЩЕНИЕ:  записи REDO обработаны до смещения 0/60000D8, нагрузка системы: CPU: пользов.: 0.00 с, система: 0.00 с, прошло: 0.01 с\\
-2024-05-28 17:42:12.858 GMT [61896] СООБЩЕНИЕ:  последняя завершённая транзакция была выполнена в 2024-05-28 17:20:13.468706+00\\
-2024-05-28 17:42:12.860 GMT [61896] СООБЩЕНИЕ:  файл журнала "000000010000000000000006" восстановлен из архива\\
-cp: /var/db/postgres0/primary/backup/wal/00000002.history: No such file or directory\\
-2024-05-28 17:42:12.862 GMT [61896] СООБЩЕНИЕ:  выбранный ID новой линии времени: 2\\
-2024-05-28 17:42:12.865 GMT [61896] СООБЩЕНИЕ:  восстановление архива завершено\\
-cp: /var/db/postgres0/primary/backup/wal/00000001.history: No such file or directory\\
-2024-05-28 17:42:12.876 GMT [61895] СООБЩЕНИЕ:  система БД готова принимать подключения\\
-\$ psql -h localhost -p "\$DDB\_PG\_PORT" "\$DDB\_PG\_DATABASE"\\
-postgres=\# select * from note\_prv;\\
- id |         content          \\
-----+--------------------------\\
-  1 | Note at postgres\\
-  2 | Another note at postgres\\
-(2 rows)
+    \$ sh common/start.sh  \\
+    2024-05-28 17:42:12.835 GMT [61895] СООБЩЕНИЕ:  запускается PostgreSQL 14.2 on amd64-portbld-freebsd13.0, compiled by FreeBSD clang version 11.0.1 (git@github.com:llvm/llvm-project.git llvmorg-11.0.1-0-g43ff75f2c3fe), 64-bit\\
+    2024-05-28 17:42:12.835 GMT [61895] СООБЩЕНИЕ:  для приёма подключений по адресу IPv4 "127.0.0.1" открыт порт 9666\\
+    2024-05-28 17:42:12.838 GMT [61896] СООБЩЕНИЕ:  работа системы БД была прервана; последний момент работы: 2024-05-28 17:19:51 GMT\\
+    cp: /var/db/postgres0/primary/backup/wal/00000002.history: No such file or directory\\
+    2024-05-28 17:42:12.840 GMT [61896] СООБЩЕНИЕ:  начинается восстановление архива\\
+    2024-05-28 17:42:12.842 GMT [61896] СООБЩЕНИЕ:  файл журнала "000000010000000000000002" восстановлен из архива\\
+    2024-05-28 17:42:12.843 GMT [61896] СООБЩЕНИЕ:  запись REDO начинается со смещения 0/2000028\\
+    2024-05-28 17:42:12.843 GMT [61896] СООБЩЕНИЕ:  согласованное состояние восстановления достигнуто по смещению 0/2000138\\
+    2024-05-28 17:42:12.844 GMT [61895] СООБЩЕНИЕ:  система БД готова принимать подключения в режиме "только чтение"\\
+    2024-05-28 17:42:12.845 GMT [61896] СООБЩЕНИЕ:  файл журнала "000000010000000000000003" восстановлен из архива\\
+    2024-05-28 17:42:12.852 GMT [61896] СООБЩЕНИЕ:  файл журнала "000000010000000000000004" восстановлен из архива\\
+    2024-05-28 17:42:12.854 GMT [61896] СООБЩЕНИЕ:  файл журнала "000000010000000000000005" восстановлен из архива\\
+    2024-05-28 17:42:12.856 GMT [61896] СООБЩЕНИЕ:  файл журнала "000000010000000000000006" восстановлен из архива\\
+    cp: /var/db/postgres0/primary/backup/wal/000000010000000000000007: No such file or directory\\
+    2024-05-28 17:42:12.858 GMT [61896] СООБЩЕНИЕ:  записи REDO обработаны до смещения 0/60000D8, нагрузка системы: CPU: пользов.: 0.00 с, система: 0.00 с, прошло: 0.01 с\\
+    2024-05-28 17:42:12.858 GMT [61896] СООБЩЕНИЕ:  последняя завершённая транзакция была выполнена в 2024-05-28 17:20:13.468706+00\\
+    2024-05-28 17:42:12.860 GMT [61896] СООБЩЕНИЕ:  файл журнала "000000010000000000000006" восстановлен из архива\\
+    cp: /var/db/postgres0/primary/backup/wal/00000002.history: No such file or directory\\
+    2024-05-28 17:42:12.862 GMT [61896] СООБЩЕНИЕ:  выбранный ID новой линии времени: 2\\
+    2024-05-28 17:42:12.865 GMT [61896] СООБЩЕНИЕ:  восстановление архива завершено\\
+    cp: /var/db/postgres0/primary/backup/wal/00000001.history: No such file or directory\\
+    2024-05-28 17:42:12.876 GMT [61895] СООБЩЕНИЕ:  система БД готова принимать подключения\\
+    \$ psql -h localhost -p "\$DDB\_PG\_PORT" "\$DDB\_PG\_DATABASE"\\
+    postgres=\# select * from note\_prv;\\
+    id |         content          \\
+    ----+--------------------------\\
+    1 | Note at postgres\\
+    2 | Another note at postgres\\
+    (2 rows)
 }
 
 Починили.
@@ -550,7 +547,7 @@ postgres=\# select * from note\_prv;\\
     caption={Скрипт sql-dump}
 ]{../db/common/sql-dump.sh}
 
-После этого в директории с бэкапами появились нужные нам архивы. 
+После этого в директории с бэкапами появились нужные нам архивы.
 
 Теперь летим на главный узел и запускаем наш кошмар там: \texttt{sh primary/donwload.sh \&\& sh common/sql-restore.sh}.
 
@@ -562,13 +559,13 @@ postgres=\# select * from note\_prv;\\
 Проверяем, что в таблицах.
 
 \texttt{
-postgres=\# select * from note\_prv;\\
- id |         content          \\
-  1 | Note at postgres\\
-  2 | Another note at postgres\\
- 35 | The first testing note\\
- 36 | The second testing note\\
- 37 | The third testing note
+    postgres=\# select * from note\_prv;\\
+    id |         content          \\
+    1 | Note at postgres\\
+    2 | Another note at postgres\\
+    35 | The first testing note\\
+    36 | The second testing note\\
+    37 | The third testing note
 }
 
 \section{Вывод}
