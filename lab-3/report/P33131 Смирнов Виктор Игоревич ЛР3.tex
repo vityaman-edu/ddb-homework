@@ -525,9 +525,24 @@ postgres=\# select * from note\_prv;\\
 
 Теперь летим на резервный узел и там восстанавливаем бд до заданного момента времени: \texttt{sh standby/backup2dump.sh "2024-05-28 17:46:57"}.
 
+\lstinputlisting[
+    language=bash,
+    caption={Скрипт backup2dump}
+]{../db/standby/backup2dump.sh}
+
+\lstinputlisting[
+    language=bash,
+    caption={Скрипт sql-dump}
+]{../db/common/sql-dump.sh}
+
 После этого в директории с бэкапами появились нужные нам архивы. 
 
 Теперь летим на главный узел и запускаем наш кошмар там: \texttt{sh primary/donwload.sh \&\& sh common/sql-restore.sh}.
+
+\lstinputlisting[
+    language=bash,
+    caption={Скрипт sql-restore}
+]{../db/common/sql-restore.sh}
 
 Проверяем, что в таблицах.
 
